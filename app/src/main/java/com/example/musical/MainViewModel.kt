@@ -1,8 +1,9 @@
-package com.example.musical.ui.theme
+package com.example.musical
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import com.example.musical.navgraph.Screen
 
 class MainViewModel:ViewModel() {
 
@@ -11,7 +12,7 @@ class MainViewModel:ViewModel() {
     val currentScreen: MutableState<Screen>
         get() = _currentScreen
 
-    fun setCurrentScreen(screen:Screen){
+    fun setCurrentScreen(screen: Screen){
         _currentScreen.value = screen
     }
 }

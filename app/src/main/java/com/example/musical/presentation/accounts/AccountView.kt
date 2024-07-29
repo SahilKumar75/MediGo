@@ -1,4 +1,4 @@
-package com.example.musical.ui.theme
+package com.example.musical.presentation.accounts
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.example.musical.R
 
 
 @Composable
@@ -48,7 +49,7 @@ fun AccountView(){
 
         Row(modifier = Modifier.padding(top = 16.dp)) {
             Icon(
-                painter = painterResource(id = com.example.musical.R.drawable.baseline_medical_services_24),
+                painter = painterResource(id = R.drawable.baseline_medical_services_24),
                 contentDescription = "Ongoing treatment",
                 modifier = Modifier.padding(end = 8.dp)
             )

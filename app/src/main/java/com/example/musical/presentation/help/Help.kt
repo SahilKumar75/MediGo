@@ -1,4 +1,4 @@
-package com.example.musical.ui.theme
+package com.example.musical.presentation.help
 
 import android.content.Intent
 import android.net.Uri

@@ -1,4 +1,4 @@
-package com.example.musical.ui.theme
+package com.example.musical.navgraph
 
 import androidx.annotation.DrawableRes
 import com.example.musical.R
@@ -7,7 +7,7 @@ sealed class Screen(val title: String, val route: String) {
 
     sealed class BottomScreen(
         val bTitle: String, val bRoute: String, @DrawableRes val icon: Int
-    ):Screen(bTitle,bRoute){
+    ): Screen(bTitle,bRoute){
         object Home : BottomScreen("Home", "home", R.drawable.baseline_medical_services_24)
 
         object Library : BottomScreen(
@@ -40,7 +40,6 @@ sealed class Screen(val title: String, val route: String) {
             R.drawable.baseline_person_add_alt_1_24
         )
     }
-
 }
 
 val screensInBottom = listOf(

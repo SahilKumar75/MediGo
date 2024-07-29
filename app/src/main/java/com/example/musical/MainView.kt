@@ -1,8 +1,7 @@
-package com.example.musical.ui.theme
+package com.example.musical
 
 
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -17,19 +16,18 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.media3.common.util.Log
 import androidx.navigation.NavController
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.example.musical.R
+import com.example.musical.navgraph.Navigation
+import com.example.musical.navgraph.Screen
+import com.example.musical.navgraph.screensInBottom
+import com.example.musical.navgraph.screensInDrawer
+import com.example.musical.presentation.accounts.AccountDialog
+import com.example.musical.presentation.home.components.MoreBottomSheet
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -179,67 +177,4 @@ fun DrawerItem(
     }
 }
 
-@Composable
-fun MoreBottomSheet(modifier: Modifier) {
-    Box(
-        Modifier
-            .fillMaxWidth()
-            .height(300.dp)
-            .background(Color(0xFF006eff))
-    ) {
-        Column(modifier = modifier.padding(16.dp), verticalArrangement = Arrangement.SpaceBetween) {
-            Row(modifier = modifier.padding(16.dp)) {
-                Icon(
-                    modifier = Modifier.padding(end = 8.dp),
-                    painter = painterResource(id = R.drawable.baseline_settings_24),
-                    contentDescription = "Settings"
-                )
-                Text(text = "Settings", fontSize = 20.sp, color = Color.White)
-            }
-            Row(modifier = modifier.padding(16.dp)) {
-                Icon(
-                    modifier = Modifier.padding(end = 8.dp),
-                    painter = painterResource(id = R.drawable.ic_baseline_share_24),
-                    contentDescription = "Share"
-                )
-                Text(text = "Share", fontSize = 20.sp, color = Color.White)
-            }
-            Row(modifier = modifier.padding(16.dp)) {
-                Icon(
-                    modifier = Modifier.padding(end = 8.dp),
-                    painter = painterResource(id = R.drawable.ic_help_green),
-                    contentDescription = "Help"
-                )
-                Text(text = "Help", fontSize = 20.sp, color = Color.White)
-            }
-        }
-    }
-}
 
-@Composable
-fun LogOut() {
-    val context = LocalContext.current
-    LogOut(context = context)
-}
-
-@Composable
-fun Navigation(navController: NavController, viewModel: MainViewModel, pd: PaddingValues) {
-    NavHost(navController = navController as NavHostController, startDestination = Screen.BottomScreen.Home.bRoute, modifier = Modifier.padding(pd)) {
-        composable(Screen.BottomScreen.Home.bRoute) {
-            Home(navController)
-        }
-        composable(Screen.BottomScreen.Browse.bRoute) {
-            Report()
-        }
-        composable(Screen.BottomScreen.Library.bRoute) {
-            Help()
-        }
-        composable(Screen.DrawerScreen.Account.route) {
-            AccountView()
-        }
-        composable(Screen.DrawerScreen.Subscription.route) {
-            LogOut()
-        }
-
-    }
-}

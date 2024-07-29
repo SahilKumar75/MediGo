@@ -1,4 +1,4 @@
-package com.example.musical.ui.theme
+package com.example.musical.presentation.accounts
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

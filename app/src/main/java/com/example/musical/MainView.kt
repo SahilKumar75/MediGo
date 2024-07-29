@@ -1,7 +1,5 @@
 package com.example.musical
 
-
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -57,31 +55,37 @@ fun MainView() {
 
     val bottomBar: @Composable () -> Unit = {
         if (currentScreen is Screen.DrawerScreen || currentScreen == Screen.BottomScreen.Home) {
-            BottomNavigation(
-                modifier = Modifier.wrapContentSize(),
-                backgroundColor = Color(0xFF006eff) // Set the background color to #006eff
+            Surface(
+                shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp), // More rounded upper corners
+                color = Color(0xFF006eff), // Background color of the bottom bar
+                modifier = Modifier.fillMaxWidth()
             ) {
-                screensInBottom.forEach { item ->
-                    val isSelected = currentRoute == item.bRoute
-                    android.util.Log.d("Navigation", "Item: ${item.bTitle}, Current Route: $currentRoute, Is Selected: $isSelected")
-                    val tint = if (isSelected) Color.White else Color.Black
-                    BottomNavigationItem(
-                        selected = currentRoute == item.bRoute,
-                        onClick = {
-                            controller.navigate(item.bRoute)
-                            title.value = item.bTitle
-                        },
-                        icon = {
-                            Icon(
-                                painter = painterResource(id = item.icon),
-                                contentDescription = item.bTitle,
-                                tint = tint
-                            )
-                        },
-                        label = { Text(text = item.bTitle, color = tint) },
-                        selectedContentColor = Color.White,
-                        unselectedContentColor = Color.Black
-                    )
+                BottomNavigation(
+                    modifier = Modifier.wrapContentSize(),
+                    backgroundColor = Color(0xFF006eff), // Make background color transparent
+                ) {
+                    screensInBottom.forEach { item ->
+                        val isSelected = currentRoute == item.bRoute
+                        android.util.Log.d("Navigation", "Item: ${item.bTitle}, Current Route: $currentRoute, Is Selected: $isSelected")
+                        val tint = if (isSelected) Color.White else Color.Black
+                        BottomNavigationItem(
+                            selected = currentRoute == item.bRoute,
+                            onClick = {
+                                controller.navigate(item.bRoute)
+                                title.value = item.bTitle
+                            },
+                            icon = {
+                                Icon(
+                                    painter = painterResource(id = item.icon),
+                                    contentDescription = item.bTitle,
+                                    tint = tint
+                                )
+                            },
+                            label = { Text(text = item.bTitle, color = tint) },
+                            selectedContentColor = Color.White,
+                            unselectedContentColor = Color.Black
+                        )
+                    }
                 }
             }
         }
@@ -98,7 +102,9 @@ fun MainView() {
             scaffoldState = scaffoldState,
             topBar = {
                 TopAppBar(
-                    title = { Text(title.value) },
+                    title = { Text(title.value, color = Color.Black) },
+                    backgroundColor = Color.White,
+                    contentColor = Color.Black,
                     actions = {
                         IconButton(
                             onClick = {
@@ -110,7 +116,7 @@ fun MainView() {
                                 }
                             }
                         ) {
-                            Icon(imageVector = Icons.Default.MoreVert, contentDescription = null)
+                            Icon(imageVector = Icons.Default.MoreVert, contentDescription = null, tint = Color.Black)
                         }
                     },
                     navigationIcon = {
@@ -119,7 +125,7 @@ fun MainView() {
                                 scaffoldState.drawerState.open()
                             }
                         }) {
-                            Icon(imageVector = Icons.Default.AccountCircle, contentDescription = "Menu")
+                            Icon(imageVector = Icons.Default.AccountCircle, contentDescription = "Menu", tint = Color.Black)
                         }
                     }
                 )
@@ -176,5 +182,3 @@ fun DrawerItem(
         )
     }
 }
-
-

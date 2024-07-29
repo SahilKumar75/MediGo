@@ -5,14 +5,17 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.musical.navgraph.Screen
 
-class MainViewModel:ViewModel() {
+class MainViewModel : ViewModel() {
 
     private val _currentScreen: MutableState<Screen> = mutableStateOf(Screen.DrawerScreen.AddAccount)
-
     val currentScreen: MutableState<Screen>
         get() = _currentScreen
 
-    fun setCurrentScreen(screen: Screen){
+    private val _username: MutableState<String> = mutableStateOf("User")
+    val username: MutableState<String>
+        get() = _username
+
+    fun setCurrentScreen(screen: Screen) {
         _currentScreen.value = screen
     }
 }

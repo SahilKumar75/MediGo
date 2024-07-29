@@ -1,6 +1,5 @@
 package com.example.musical.presentation.home
 
-
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -32,14 +31,11 @@ import com.example.musical.presentation.home.components.ImageCarousel
 import com.example.musical.presentation.home.components.PieChart
 import com.example.musical.presentation.home.components.SearchBar
 
-
 data class Appointment(
     val doctorName: String,
     val specialization: String,
     val imageRes: Int
 )
-
-
 
 @Composable
 fun HomeScreen(navController: NavController) {
@@ -50,7 +46,7 @@ fun HomeScreen(navController: NavController) {
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { navController.navigate("chatRoute") },
-                containerColor = MaterialTheme.colorScheme.primary
+                containerColor = Color.White
             ) {
                 Icon(
                     imageVector = Icons.Filled.Chat,
@@ -110,6 +106,7 @@ fun HomeScreen(navController: NavController) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp)
+                            .aspectRatio(1f) // Ensure the card is a square
                     ) {
                         Column(
                             modifier = Modifier.padding(16.dp),
@@ -140,6 +137,7 @@ fun HomeScreen(navController: NavController) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(16.dp)
+                            .aspectRatio(1f) // Ensure the card is a square
                     ) {
                         Column(
                             modifier = Modifier.padding(16.dp),
@@ -154,21 +152,12 @@ fun HomeScreen(navController: NavController) {
                                 data = pieData,
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(200.dp)
+                                    .aspectRatio(1f) // Ensure the chart is a square
                             )
                         }
                     }
                 }
             }
-
-
         }
     )
 }
-
-
-
-
-
-
-

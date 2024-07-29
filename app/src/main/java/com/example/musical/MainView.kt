@@ -18,8 +18,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation.compose.*
 import com.example.musical.navgraph.Navigation
 import com.example.musical.navgraph.Screen
 import com.example.musical.navgraph.screensInBottom
@@ -38,12 +37,12 @@ fun MainView() {
     val isSheetFullScreen by remember { mutableStateOf(false) }
 
     val modifier = if (isSheetFullScreen) Modifier.fillMaxSize() else Modifier.fillMaxWidth()
-    val controller: NavController = rememberNavController()
-    val navBackStackEntry by controller.currentBackStackEntryAsState()
+    val navController: NavController = rememberNavController()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
     val dialogOpen = remember { mutableStateOf(false) }
 
-    val currentScreen = remember { viewModel.currentScreen.value }
+    val currentScreen = viewModel.currentScreen.value
     val title = remember { mutableStateOf(currentScreen.title) }
 
     val modalSheetState = rememberModalBottomSheetState(
@@ -54,7 +53,7 @@ fun MainView() {
     val roundedCornerRadius = if (isSheetFullScreen) 0.dp else 12.dp
 
     val bottomBar: @Composable () -> Unit = {
-        if (currentScreen is Screen.DrawerScreen || currentScreen == Screen.BottomScreen.Home) {
+        if (currentScreen is Screen.DrawerScreen || currentScreen is Screen.BottomScreen) {
             Surface(
                 shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp), // More rounded upper corners
                 color = Color(0xFF006eff), // Background color of the bottom bar
@@ -66,12 +65,21 @@ fun MainView() {
                 ) {
                     screensInBottom.forEach { item ->
                         val isSelected = currentRoute == item.bRoute
-                        android.util.Log.d("Navigation", "Item: ${item.bTitle}, Current Route: $currentRoute, Is Selected: $isSelected")
                         val tint = if (isSelected) Color.White else Color.Black
                         BottomNavigationItem(
                             selected = currentRoute == item.bRoute,
                             onClick = {
-                                controller.navigate(item.bRoute)
+                                navController.navigate(item.bRoute) {
+                                    // Avoid multiple copies of the same destination when reselecting the same item
+                                    launchSingleTop = true
+                                    // Restore state when reselecting a previously selected item
+                                    restoreState = true
+                                    // Pop up to the start destination of the graph to avoid building up a large stack of destinations
+                                    popUpTo(navController.graph.startDestinationId) {
+                                        saveState = true
+                                    }
+                                }
+                                viewModel.setCurrentScreen(item)
                                 title.value = item.bTitle
                             },
                             icon = {
@@ -141,7 +149,8 @@ fun MainView() {
                             if (item.dRoute == "add_account") {
                                 dialogOpen.value = true
                             } else {
-                                controller.navigate(item.dRoute)
+                                navController.navigate(item.dRoute)
+                                viewModel.setCurrentScreen(item)
                                 title.value = item.dTitle
                             }
                         }
@@ -149,7 +158,7 @@ fun MainView() {
                 }
             }
         ) {
-            Navigation(navController = controller, viewModel = viewModel, pd = it)
+            Navigation(navController = navController, viewModel = viewModel, pd = it)
             AccountDialog(dialogOpen = dialogOpen)
         }
     }

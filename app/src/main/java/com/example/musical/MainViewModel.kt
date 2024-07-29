@@ -7,7 +7,7 @@ import com.example.musical.navgraph.Screen
 
 class MainViewModel : ViewModel() {
 
-    private val _currentScreen: MutableState<Screen> = mutableStateOf(Screen.DrawerScreen.AddAccount)
+    private val _currentScreen: MutableState<Screen> = mutableStateOf(Screen.BottomScreen.Home) // Set to initial screen
     val currentScreen: MutableState<Screen>
         get() = _currentScreen
 

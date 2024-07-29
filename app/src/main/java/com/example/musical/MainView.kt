@@ -12,10 +12,13 @@ import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.*
@@ -44,6 +47,7 @@ fun MainView() {
 
     val currentScreen = viewModel.currentScreen.value
     val title = remember { mutableStateOf(currentScreen.title) }
+    val username = viewModel.username.value
 
     val modalSheetState = rememberModalBottomSheetState(
         initialValue = ModalBottomSheetValue.Hidden,
@@ -110,9 +114,20 @@ fun MainView() {
             scaffoldState = scaffoldState,
             topBar = {
                 TopAppBar(
-                    title = { Text(title.value, color = Color.Black) },
-                    backgroundColor = Color.White,
-                    contentColor = Color.Black,
+                    title = {
+                        if (currentScreen is Screen.BottomScreen.Home) {
+                            Text(
+                                text = "Hi, $username",
+                                fontSize = 24.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = Color.Black
+                            )
+                        } else {
+                            Text(title.value, color = Color.Black)
+                        }
+                    },
+                    backgroundColor = Color.Transparent,
+                    elevation = 0.dp,
                     actions = {
                         IconButton(
                             onClick = {

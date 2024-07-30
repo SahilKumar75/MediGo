@@ -17,6 +17,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.ui.text.font.FontWeight
 import com.example.musical.R
+import com.example.musical.common.utils.Doctor
+import com.example.musical.common.utils.DoctorDetailsCard
 import com.example.musical.presentation.home.components.ImageCarousel
 import com.example.musical.presentation.home.components.MedItem
 import com.example.musical.presentation.home.components.Medication
@@ -32,6 +34,13 @@ fun HomeScreen(navController: NavController) {
             Medication(R.drawable.med3, "Medicine 3", "1 tablet before bed")
         )
     }
+    val doctor = Doctor(
+        imageRes = R.drawable.doc_image, // Replace with your doctor image resource
+        name = "Dr. John Doe",
+        specialty = "Cardiologist",
+        contact = "+1 234 567 890",
+        availability = "Mon - Fri, 9 AM - 5 PM"
+    )
 
     Scaffold(
         floatingActionButton = {
@@ -135,21 +144,7 @@ fun HomeScreen(navController: NavController) {
                                 .fillMaxWidth()
                                 .padding(start = 16.dp, top = 16.dp)
                         )
-                        ElevatedCard(
-                            elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(16.dp)
-                                .height(150.dp)
-                        ) {
-                            Column(
-                                modifier = Modifier.padding(16.dp),
-                                verticalArrangement = Arrangement.Center,
-                                horizontalAlignment = Alignment.CenterHorizontally
-                            ) {
-                                // Add more content related to "Your Doc" here
-                            }
-                        }
+                        DoctorDetailsCard(doctor)
                     }
                 }
             }

@@ -3,17 +3,18 @@ package com.example.musical.presentation.chat
 import android.Manifest
 import android.content.pm.PackageManager
 import android.media.MediaRecorder
+import android.net.Uri
 import android.os.Environment
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.Mic
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -23,12 +24,13 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
+import coil.compose.rememberImagePainter
 import com.example.musical.R
 import com.example.musical.presentation.chat.components.ChatItem
 import java.io.File
 import java.io.IOException
 
-data class Message(val text: String)
+data class Message(val text: String, val imageUri: Uri? = null, val fileUri: Uri? = null)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,6 +51,22 @@ fun ChatScreen(navController: NavController, chatItem: ChatItem) {
             // Permission granted
         } else {
             // Permission denied
+        }
+    }
+
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            messages.add(Message(text = "", imageUri = it))
+        }
+    }
+
+    val filePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            messages.add(Message(text = "", fileUri = it))
         }
     }
 
@@ -83,7 +101,7 @@ fun ChatScreen(navController: NavController, chatItem: ChatItem) {
         }
         recorder = null
         isRecording = false
-        // Handle the recorded audio file (e.g., add to messages, upload, etc.)
+        messages.add(Message(text = "Audio recording", fileUri = Uri.fromFile(outputFile)))
     }
 
     Scaffold(
@@ -114,17 +132,30 @@ fun ChatScreen(navController: NavController, chatItem: ChatItem) {
                     contentPadding = PaddingValues(16.dp)
                 ) {
                     items(messages) { message ->
-                        Text(
-                            text = message.text,
-                            modifier = Modifier.padding(8.dp)
-                        )
+                        Column(modifier = Modifier.padding(8.dp)) {
+                            Text(
+                                text = message.text,
+                                modifier = Modifier.padding(8.dp)
+                            )
+                            message.imageUri?.let {
+                                // Display the selected image
+                                Image(
+                                    painter = rememberImagePainter(it),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(200.dp)
+                                )
+                            }
+                            message.fileUri?.let {
+                                Text(text = "File: ${it.lastPathSegment}", color = Color.Blue)
+                            }
+                        }
                     }
                 }
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(4.dp) // Reduced spacing between icons
                 ) {
                     IconButton(
                         onClick = {
@@ -140,6 +171,12 @@ fun ChatScreen(navController: NavController, chatItem: ChatItem) {
                             contentDescription = if (isRecording) "Stop Recording" else "Record Audio",
                             tint = if (isRecording) Color.Red else Color.Black
                         )
+                    }
+                    IconButton(onClick = { imagePickerLauncher.launch("image/*") }) {
+                        Icon(imageVector = Icons.Default.Image, contentDescription = "Pick Image")
+                    }
+                    IconButton(onClick = { filePickerLauncher.launch("*/*") }) {
+                        Icon(imageVector = Icons.Default.AttachFile, contentDescription = "Pick File")
                     }
                     BasicTextField(
                         value = message,
@@ -158,7 +195,7 @@ fun ChatScreen(navController: NavController, chatItem: ChatItem) {
                     )
                     Button(onClick = {
                         if (message.text.isNotEmpty()) {
-                            messages.add(Message(message.text))
+                            messages.add(Message(text = message.text))
                             message = TextFieldValue("")
                         }
                     }) {

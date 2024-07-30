@@ -97,5 +97,7 @@ dependencies {
     implementation (libs.androidx.navigation.compose.v240alpha06)
     implementation (libs.gson)
     implementation (libs.accompanist.systemuicontroller)
+    implementation (libs.coil.compose)
+
 
 }

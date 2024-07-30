@@ -8,7 +8,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
@@ -49,7 +48,6 @@ fun MainView() {
         if (currentScreen is Screen.DrawerScreen || currentScreen is Screen.BottomScreen) {
             Surface(
                 shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
-                color = Color(0xFF006eff),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 BottomNavigation(
@@ -92,7 +90,7 @@ fun MainView() {
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
-            if (currentRoute != Screen.Chat.route) { // Conditionally show top bar
+            if (currentRoute !in listOf(Screen.Chat.route, "chat_screen/{chatItem}")) { // Conditionally show top bar
                 TopAppBar(
                     title = {
                         if (currentScreen is Screen.BottomScreen.Home) {
@@ -106,24 +104,17 @@ fun MainView() {
                             Text(title.value, color = Color.Black)
                         }
                     },
-                    backgroundColor = Color.Transparent,
+                    backgroundColor = Color(0xFFF5F5F5),
                     elevation = 0.dp,
                     actions = {
-                        IconButton(
-                            onClick = {
-                                navController.navigate(Screen.Chat.route)
+                        if (currentRoute != Screen.Chat.route) {
+                            IconButton(
+                                onClick = {
+                                    navController.navigate(Screen.Chat.route)
+                                }
+                            ) {
+                                Icon(imageVector = Icons.Default.Chat, contentDescription = null, tint = Color.Black)
                             }
-                        ) {
-                            Icon(imageVector = Icons.Default.Chat, contentDescription = null, tint = Color.Black)
-                        }
-                    },
-                    navigationIcon = {
-                        IconButton(onClick = {
-                            scope.launch {
-                                scaffoldState.drawerState.open()
-                            }
-                        }) {
-                            Icon(imageVector = Icons.Default.AccountCircle, contentDescription = "Menu", tint = Color.Black)
                         }
                     }
                 )

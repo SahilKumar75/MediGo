@@ -3,19 +3,20 @@ package com.example.musical.presentation.home
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.graphics.Color
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.ui.text.font.FontWeight
 import com.example.musical.R
 import com.example.musical.common.utils.Doctor
 import com.example.musical.common.utils.DoctorDetailsCard
@@ -24,6 +25,7 @@ import com.example.musical.presentation.home.components.MedItem
 import com.example.musical.presentation.home.components.Medication
 import kotlin.math.abs
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(navController: NavController) {
     var offsetX by remember { mutableStateOf(0f) }
@@ -43,17 +45,6 @@ fun HomeScreen(navController: NavController) {
     )
 
     Scaffold(
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { navController.navigate("chatRoute") },
-                containerColor = Color.White
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Chat,
-                    contentDescription = "Chat"
-                )
-            }
-        },
         content = { padding ->
             Box(
                 modifier = Modifier

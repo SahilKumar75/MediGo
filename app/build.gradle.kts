@@ -82,6 +82,7 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui.graphics)
+    implementation(libs.protolite.well.known.types)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -91,4 +92,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
     implementation(libs.androidx.foundation)
     implementation(libs.ui.graphics)
+    implementation (libs.androidx.material.v130)
+    implementation (libs.androidx.material3.v100alpha01)
+    implementation (libs.androidx.navigation.compose.v240alpha06)
+
 }

@@ -2,6 +2,7 @@ package com.example.musical.navgraph
 
 import androidx.annotation.DrawableRes
 import com.example.musical.R
+import com.google.rpc.Help
 
 sealed class Screen(val title: String, val route: String) {
 
@@ -10,18 +11,22 @@ sealed class Screen(val title: String, val route: String) {
     ): Screen(bTitle,bRoute){
         object Home : BottomScreen("Home", "home", R.drawable.baseline_medical_services_24)
 
-        object Library : BottomScreen(
-            "Help", "library", R.drawable.baseline_local_hospital_24
+        object Fitness : BottomScreen(
+            "Fitness", "fitness",
+            R.drawable.baseline_fitness_center_24 // Use the appropriate icon resource
         )
-        object Browse: BottomScreen(
-            "Reports", "browse",
+
+        object Help : BottomScreen(
+            "Help", "Help", R.drawable.baseline_local_hospital_24
+        )
+
+        object Reports: BottomScreen(
+            "Reports", "Reports",
             R.drawable.baseline_menu_book_24
         )
     }
 
-
-
-    sealed class  DrawerScreen(val dTitle: String, val dRoute: String, @DrawableRes val icon: Int)
+    sealed class DrawerScreen(val dTitle: String, val dRoute: String, @DrawableRes val icon: Int)
         : Screen(dTitle, dRoute){
         object Account: DrawerScreen(
             "Account",
@@ -44,8 +49,9 @@ sealed class Screen(val title: String, val route: String) {
 
 val screensInBottom = listOf(
     Screen.BottomScreen.Home,
-    Screen.BottomScreen.Browse,
-    Screen.BottomScreen.Library
+    Screen.BottomScreen.Fitness, // Added the Fitness screen here
+    Screen.BottomScreen.Reports,
+    Screen.BottomScreen.Help
 )
 
 val screensInDrawer = listOf(

@@ -1,218 +1,171 @@
 package com.example.musical.presentation.chat
 
+import android.Manifest
+import android.content.pm.PackageManager
+import android.media.MediaRecorder
+import android.os.Environment
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBackIos
-import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedIconButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Mic
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
-import com.example.musical.presentation.chat.components.MessageBubble
+import com.example.musical.R
+import com.example.musical.presentation.chat.components.ChatItem
+import java.io.File
+import java.io.IOException
 
-//@Composable
-//fun ChatDialog(onDismiss: () -> Unit) {
-//    var userInput by remember { mutableStateOf("") }
-//    val chatMessages = remember { mutableStateListOf("How are you?") }
-//
-//    fun sendMessage(message: String) {
-//        if (message.isNotBlank()) {
-//            chatMessages.add(message)
-//            chatMessages.add("I am a bot, I received your message: $message")
-//            userInput = ""
-//        }
-//    }
-//
-//    Dialog(onDismissRequest = { onDismiss() }) {
-//        Surface(
-//            shape = RoundedCornerShape(16.dp),
-//            color = Color.White,
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(16.dp)
-//        ) {
-//            Column(
-//                modifier = Modifier
-//                    .padding(16.dp)
-//                    .background(Color.White),
-//                verticalArrangement = Arrangement.Center,
-//                horizontalAlignment = Alignment.CenterHorizontally
-//            ) {
-//                Text(
-//                    text = "Chat with Bot",
-//                    style = MaterialTheme.typography.titleLarge,
-//                    color = Color.Black
-//                )
-//                Spacer(modifier = Modifier.height(16.dp))
-//                Column(
-//                    modifier = Modifier
-//                        .weight(1f)
-//                        .fillMaxWidth()
-//                        .padding(8.dp)
-//                        .background(Color(0xFFF0F0F0))
-//                        .clip(RoundedCornerShape(8.dp))
-//                        .padding(8.dp)
-//                ) {
-//                    chatMessages.forEach { message ->
-//                        Text(
-//                            text = message,
-//                            style = MaterialTheme.typography.bodyMedium,
-//                            color = Color.Black,
-//                            modifier = Modifier.padding(4.dp)
-//                        )
-//                    }
-//                }
-//                Row(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(top = 8.dp),
-//                    verticalAlignment = Alignment.CenterVertically,
-//                    horizontalArrangement = Arrangement.SpaceBetween
-//                ) {
-//                    OutlinedTextField(
-//                        value = userInput,
-//                        onValueChange = { userInput = it },
-//                        placeholder = { Text(text = "Type your message...") },
-//                        modifier = Modifier.weight(1f)
-//                    )
-//                    Spacer(modifier = Modifier.width(8.dp))
-//                    Button(onClick = { sendMessage(userInput) }) {
-//                        Text(text = "Send")
-//                    }
-//                }
-//            }
-//        }
-//    }
-//}
+data class Message(val text: String)
 
-data class ChatMessage(val text: String, val isUser: Boolean)
-
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChatScreen(modifier: Modifier = Modifier, navController: NavController) {
-    val chatMessages = remember {
-        mutableStateListOf(
-            ChatMessage("Hello! How can I assist you today?", false)
-        )
-    }
-    var userInput by remember { mutableStateOf("") }
+fun ChatScreen(navController: NavController, chatItem: ChatItem) {
+    var message by remember { mutableStateOf(TextFieldValue("")) }
+    val messages = remember { mutableStateListOf<Message>() }
+    var isRecording by remember { mutableStateOf(false) }
+    var recorder: MediaRecorder? by remember { mutableStateOf(null) }
 
-    fun sendMessage(message: String) {
-        if (message.isNotBlank()) {
-            chatMessages.add(ChatMessage(message, true))
-            // Simulate bot response
-            chatMessages.add(ChatMessage("I am a bot, I received your message: $message", false))
-            userInput = ""
+    val context = LocalContext.current
+    val outputDir = context.getExternalFilesDir(Environment.DIRECTORY_MUSIC)
+    val outputFile = File(outputDir, "recorded_audio.3gp")
+
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            // Permission granted
+        } else {
+            // Permission denied
         }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) {
-        Box(Modifier.fillMaxWidth()) {
-            OutlinedIconButton(
-                modifier = Modifier.align(Alignment.CenterStart),
-                onClick = { navController.popBackStack() },
-                shape = RoundedCornerShape(8.dp),
-            ) {
-                Icon(
-                    modifier = Modifier.padding(start = 8.dp),
-                    imageVector = Icons.Filled.ArrowBackIos,
-                    contentDescription = "Back button"
-                )
-            }
-
-            Text(
-                modifier = Modifier.align(Alignment.Center),
-                text = "MediBot",
-                style = MaterialTheme.typography.titleLarge.copy(fontWeight = FontWeight.Bold)
-            )
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        Surface(
-            shape = RoundedCornerShape(16.dp),
-            color = Color.White,
-            modifier = Modifier
-                .fillMaxSize()
-//                .padding(16.dp)
+    fun startRecording() {
+        if (ContextCompat.checkSelfPermission(
+                context,
+                Manifest.permission.RECORD_AUDIO
+            ) == PackageManager.PERMISSION_GRANTED
         ) {
+            recorder = MediaRecorder().apply {
+                setAudioSource(MediaRecorder.AudioSource.MIC)
+                setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
+                setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
+                setOutputFile(outputFile.absolutePath)
+                try {
+                    prepare()
+                    start()
+                    isRecording = true
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+            }
+        } else {
+            permissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
+        }
+    }
+
+    fun stopRecording() {
+        recorder?.apply {
+            stop()
+            release()
+        }
+        recorder = null
+        isRecording = false
+        // Handle the recorded audio file (e.g., add to messages, upload, etc.)
+    }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(chatItem.name) },
+                navigationIcon = {
+                    IconButton(onClick = { navController.popBackStack() }) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                    }
+                },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary
+                )
+            )
+        },
+        content = { padding ->
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.White),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .padding(padding)
             ) {
-                Column(
+                LazyColumn(
                     modifier = Modifier
                         .weight(1f)
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(8.dp))
+                        .fillMaxWidth(),
+                    contentPadding = PaddingValues(16.dp)
                 ) {
-                    chatMessages.forEach { message ->
-                        MessageBubble(
-                            message = message.text,
-                            isSender = message.isUser
+                    items(messages) { message ->
+                        Text(
+                            text = message.text,
+                            modifier = Modifier.padding(8.dp)
                         )
                     }
                 }
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(top = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                        .padding(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    OutlinedTextField(
-                        value = userInput,
-                        onValueChange = { userInput = it },
-                        placeholder = { Text(text = "Type your message...") },
-                        modifier = Modifier.weight(1f)
+                    IconButton(
+                        onClick = {
+                            if (isRecording) {
+                                stopRecording()
+                            } else {
+                                startRecording()
+                            }
+                        }
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Mic,
+                            contentDescription = if (isRecording) "Stop Recording" else "Record Audio",
+                            tint = if (isRecording) Color.Red else Color.Black
+                        )
+                    }
+                    BasicTextField(
+                        value = message,
+                        onValueChange = { message = it },
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(8.dp)
+                            .background(Color.Gray.copy(alpha = 0.2f), MaterialTheme.shapes.small)
+                            .padding(8.dp),
+                        decorationBox = { innerTextField ->
+                            if (message.text.isEmpty()) {
+                                Text(text = "Type a message", color = Color.Gray)
+                            }
+                            innerTextField()
+                        }
                     )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Button(onClick = { sendMessage(userInput) }) {
-                        Text(text = "Send")
+                    Button(onClick = {
+                        if (message.text.isNotEmpty()) {
+                            messages.add(Message(message.text))
+                            message = TextFieldValue("")
+                        }
+                    }) {
+                        Text("Send")
                     }
                 }
             }
         }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ChatScreenPreview() {
-    MaterialTheme {
-        ChatScreen(navController = rememberNavController())
-    }
+    )
 }

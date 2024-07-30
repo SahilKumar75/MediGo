@@ -3,6 +3,7 @@ accompanistFlowlayout = "0.24.13-rc"
 accompanistPager = "<latest-version>"
 accompanistPagerIndicators = "0.30.0"
 accompanistPagerVersion = "0.30.0"
+accompanistSystemuicontroller = "0.23.1"
 activityComposeVersion = "1.4.0"
 agp = "8.3.1"
 androidxMaterial3 = "1.0.0-alpha01"
@@ -11,6 +12,7 @@ androidxNavigationCompose = "2.7.5"
 androidxNavigationComposeVersion = "2.4.0-alpha06"
 coreKtxVersion = "1.7.0"
 foundation = "1.6.8"
+gson = "2.10.1"
 kotlin = "1.9.0"
 coreKtx = "1.13.0"
 junit = "4.13.2"
@@ -41,6 +43,7 @@ accompanist-pager = { module = "com.google.accompanist:accompanist-pager", versi
 accompanist-pager-indicators = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanistPager" }
 accompanist-pager-indicators-v0300 = { module = "com.google.accompanist:accompanist-pager-indicators", version.ref = "accompanistPagerIndicators" }
 accompanist-pager-v0300 = { module = "com.google.accompanist:accompanist-pager", version.ref = "accompanistPagerVersion" }
+accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontroller" }
 androidx-activity-compose-v140 = { module = "androidx.activity:activity-compose", version.ref = "activityComposeVersion" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-core-ktx-v170 = { module = "androidx.core:core-ktx", version.ref = "coreKtxVersion" }
@@ -58,6 +61,7 @@ androidx-navigation-compose-v240alpha06 = { module = "androidx.navigation:naviga
 androidx-navigation-compose-v253 = { module = "androidx.navigation:navigation-compose", version.ref = "navigationComposeVersion" }
 androidx-navigation-compose-v275 = { module = "androidx.navigation:navigation-compose", version.ref = "androidxNavigationCompose" }
 androidx-ui-v160alpha08 = { module = "androidx.compose.ui:ui", version.ref = "uiVersion" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }

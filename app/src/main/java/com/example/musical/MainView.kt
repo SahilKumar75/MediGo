@@ -9,7 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -27,7 +27,6 @@ import com.example.musical.navgraph.Screen
 import com.example.musical.navgraph.screensInBottom
 import com.example.musical.navgraph.screensInDrawer
 import com.example.musical.presentation.accounts.AccountDialog
-import com.example.musical.presentation.home.components.MoreBottomSheet
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -37,9 +36,6 @@ fun MainView() {
     val scaffoldState: ScaffoldState = rememberScaffoldState()
     val scope: CoroutineScope = rememberCoroutineScope()
     val viewModel: MainViewModel = viewModel()
-    val isSheetFullScreen by remember { mutableStateOf(false) }
-
-    val modifier = if (isSheetFullScreen) Modifier.fillMaxSize() else Modifier.fillMaxWidth()
     val navController: NavController = rememberNavController()
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -49,23 +45,16 @@ fun MainView() {
     val title = remember { mutableStateOf(currentScreen.title) }
     val username = viewModel.username.value
 
-    val modalSheetState = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Hidden,
-        confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded }
-    )
-
-    val roundedCornerRadius = if (isSheetFullScreen) 0.dp else 12.dp
-
     val bottomBar: @Composable () -> Unit = {
         if (currentScreen is Screen.DrawerScreen || currentScreen is Screen.BottomScreen) {
             Surface(
-                shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp), // More rounded upper corners
-                color = Color(0xFF006eff), // Background color of the bottom bar
+                shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
+                color = Color(0xFF006eff),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 BottomNavigation(
                     modifier = Modifier.wrapContentSize(),
-                    backgroundColor = Color(0xFF006eff), // Make background color transparent
+                    backgroundColor = Color(0xFF006eff),
                 ) {
                     screensInBottom.forEach { item ->
                         val isSelected = currentRoute == item.bRoute
@@ -74,11 +63,8 @@ fun MainView() {
                             selected = currentRoute == item.bRoute,
                             onClick = {
                                 navController.navigate(item.bRoute) {
-                                    // Avoid multiple copies of the same destination when reselecting the same item
                                     launchSingleTop = true
-                                    // Restore state when reselecting a previously selected item
                                     restoreState = true
-                                    // Pop up to the start destination of the graph to avoid building up a large stack of destinations
                                     popUpTo(navController.graph.startDestinationId) {
                                         saveState = true
                                     }
@@ -103,16 +89,10 @@ fun MainView() {
         }
     }
 
-    ModalBottomSheetLayout(
-        sheetState = modalSheetState,
-        sheetShape = RoundedCornerShape(topStart = roundedCornerRadius, topEnd = roundedCornerRadius),
-        sheetContent = {
-            MoreBottomSheet(modifier = modifier)
-        }
-    ) {
-        Scaffold(
-            scaffoldState = scaffoldState,
-            topBar = {
+    Scaffold(
+        scaffoldState = scaffoldState,
+        topBar = {
+            if (currentRoute != Screen.Chat.route) { // Conditionally show top bar
                 TopAppBar(
                     title = {
                         if (currentScreen is Screen.BottomScreen.Home) {
@@ -131,15 +111,10 @@ fun MainView() {
                     actions = {
                         IconButton(
                             onClick = {
-                                scope.launch {
-                                    if (modalSheetState.isVisible)
-                                        modalSheetState.hide()
-                                    else
-                                        modalSheetState.show()
-                                }
+                                navController.navigate(Screen.Chat.route)
                             }
                         ) {
-                            Icon(imageVector = Icons.Default.MoreVert, contentDescription = null, tint = Color.Black)
+                            Icon(imageVector = Icons.Default.Chat, contentDescription = null, tint = Color.Black)
                         }
                     },
                     navigationIcon = {
@@ -152,30 +127,30 @@ fun MainView() {
                         }
                     }
                 )
-            },
-            bottomBar = bottomBar,
-            drawerContent = {
-                LazyColumn(Modifier.padding(16.dp)) {
-                    items(screensInDrawer) { item ->
-                        DrawerItem(selected = currentRoute == item.dRoute, item = item) {
-                            scope.launch {
-                                scaffoldState.drawerState.close()
-                            }
-                            if (item.dRoute == "add_account") {
-                                dialogOpen.value = true
-                            } else {
-                                navController.navigate(item.dRoute)
-                                viewModel.setCurrentScreen(item)
-                                title.value = item.dTitle
-                            }
+            }
+        },
+        bottomBar = bottomBar,
+        drawerContent = {
+            LazyColumn(Modifier.padding(16.dp)) {
+                items(screensInDrawer) { item ->
+                    DrawerItem(selected = currentRoute == item.dRoute, item = item) {
+                        scope.launch {
+                            scaffoldState.drawerState.close()
+                        }
+                        if (item.dRoute == "add_account") {
+                            dialogOpen.value = true
+                        } else {
+                            navController.navigate(item.dRoute)
+                            viewModel.setCurrentScreen(item)
+                            title.value = item.dTitle
                         }
                     }
                 }
             }
-        ) {
-            Navigation(navController = navController, viewModel = viewModel, pd = it)
-            AccountDialog(dialogOpen = dialogOpen)
         }
+    ) {
+        Navigation(navController = navController, viewModel = viewModel, pd = it)
+        AccountDialog(dialogOpen = dialogOpen)
     }
 }
 

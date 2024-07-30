@@ -95,5 +95,7 @@ dependencies {
     implementation (libs.androidx.material.v130)
     implementation (libs.androidx.material3.v100alpha01)
     implementation (libs.androidx.navigation.compose.v240alpha06)
+    implementation (libs.gson)
+    implementation (libs.accompanist.systemuicontroller)
 
 }

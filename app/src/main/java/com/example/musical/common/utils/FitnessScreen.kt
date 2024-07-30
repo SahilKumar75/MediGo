@@ -37,7 +37,7 @@ fun FitnessScreen(navController: NavController) {
         }
 
         // Weekly Progress Section
-        Text(text = "Weekly Progress", style = MaterialTheme.typography.titleMedium, modifier = Modifier.align(Alignment.Start))
+        Text(text = "Weekly Progres", style = MaterialTheme.typography.titleMedium, modifier = Modifier.align(Alignment.Start))
         Card(
             modifier = Modifier
                 .fillMaxWidth()

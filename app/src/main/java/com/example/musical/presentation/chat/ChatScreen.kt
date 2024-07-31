@@ -27,6 +27,7 @@ import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
 import com.example.musical.R
 import com.example.musical.presentation.chat.components.ChatItem
+import com.google.gson.Gson
 import java.io.File
 import java.io.IOException
 
@@ -34,7 +35,8 @@ data class Message(val text: String, val imageUri: Uri? = null, val fileUri: Uri
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChatScreen(navController: NavController, chatItem: ChatItem) {
+fun ChatScreen(navController: NavController, chatItemJson: String) {
+    val chatItem = Gson().fromJson(chatItemJson, ChatItem::class.java)
     var message by remember { mutableStateOf(TextFieldValue("")) }
     val messages = remember { mutableStateListOf<Message>() }
     var isRecording by remember { mutableStateOf(false) }

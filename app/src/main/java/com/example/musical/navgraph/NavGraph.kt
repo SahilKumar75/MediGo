@@ -17,10 +17,10 @@ import com.example.musical.presentation.accounts.AccountView
 import com.example.musical.presentation.accounts.LogOut
 import com.example.musical.presentation.chat.ChatHomeScreen
 import com.example.musical.presentation.chat.ChatScreen
-import com.example.musical.presentation.chat.components.ChatItem
+import com.example.musical.presentation.chat.components.MedChatHomeScreen
+import com.example.musical.presentation.chat.components.MedChatScreen
 import com.example.musical.presentation.help.Help
 import com.example.musical.presentation.home.HomeScreen
-import com.google.gson.Gson
 
 @Composable
 fun Navigation(navController: NavController, viewModel: MainViewModel, pd: PaddingValues) {
@@ -47,16 +47,25 @@ fun Navigation(navController: NavController, viewModel: MainViewModel, pd: Paddi
         composable(Screen.DrawerScreen.Subscription.route) {
             LogOut()
         }
-        composable(Screen.Chat.route) {
+        composable("chatRoute") {
             ChatHomeScreen(navController = navController)
         }
+        composable("medChatRoute") {
+            MedChatHomeScreen(navController = navController)
+        }
         composable(
-            route = "chat_screen/{chatItem}",
-            arguments = listOf(navArgument("chatItem") { type = NavType.StringType })
+            route = "chat_screen/{chatItemJson}",
+            arguments = listOf(navArgument("chatItemJson") { type = NavType.StringType })
         ) { backStackEntry ->
-            val chatItemJson = backStackEntry.arguments?.getString("chatItem")
-            val chatItem = Gson().fromJson(chatItemJson, ChatItem::class.java)
-            ChatScreen(navController = navController, chatItem = chatItem)
+            val chatItemJson = backStackEntry.arguments?.getString("chatItemJson") ?: ""
+            ChatScreen(navController = navController, chatItemJson = chatItemJson)
+        }
+        composable(
+            route = "medChatScreen/{chatId}",
+            arguments = listOf(navArgument("chatId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val chatId = backStackEntry.arguments?.getInt("chatId") ?: 0
+            MedChatScreen(navController = navController, chatId = chatId)
         }
     }
 }

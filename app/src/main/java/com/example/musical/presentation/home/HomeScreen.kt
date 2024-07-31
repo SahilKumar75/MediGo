@@ -4,7 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.filled.MedicalServices
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -13,7 +13,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -45,6 +44,17 @@ fun HomeScreen(navController: NavController) {
     )
 
     Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    navController.navigate("medChatRoute")
+                },
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = Color.White
+            ) {
+                Icon(Icons.Filled.MedicalServices, contentDescription = "Diagnose")
+            }
+        },
         content = { padding ->
             Box(
                 modifier = Modifier
@@ -54,7 +64,7 @@ fun HomeScreen(navController: NavController) {
                         detectHorizontalDragGestures { change, dragAmount ->
                             offsetX += dragAmount
                             if (offsetX < -300) { // Detect left to right swipe
-                                navController.navigate("chatRoute")
+                                navController.navigate("medChatRoute")
                             }
                             if (abs(offsetX) > 10) {
                                 change.consume()

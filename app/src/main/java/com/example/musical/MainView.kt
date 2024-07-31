@@ -90,7 +90,7 @@ fun MainView() {
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
-            if (currentRoute !in listOf(Screen.Chat.route, "chat_screen/{chatItem}")) { // Conditionally show top bar
+            if (currentRoute !in listOf("chatRoute", "medChatScreen/{chatId}")) { // Conditionally show top bar
                 TopAppBar(
                     title = {
                         if (currentScreen is Screen.BottomScreen.Home) {
@@ -107,10 +107,10 @@ fun MainView() {
                     backgroundColor = Color(0xFFF5F5F5),
                     elevation = 0.dp,
                     actions = {
-                        if (currentRoute != Screen.Chat.route) {
+                        if (currentRoute != "chatRoute") {
                             IconButton(
                                 onClick = {
-                                    navController.navigate(Screen.Chat.route)
+                                    navController.navigate("chatRoute")
                                 }
                             ) {
                                 Icon(imageVector = Icons.Default.Chat, contentDescription = null, tint = Color.Black)

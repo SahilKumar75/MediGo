@@ -1,14 +1,20 @@
 package com.example.musical.common.utils
 
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.PaintingStyle
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -101,7 +107,7 @@ fun FitnessScreen(navController: NavController) {
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     horizontalAlignment = Alignment.Start
                 ) {
-                    // Add more content related to "Weekly Progress" here
+                    WeeklyProgress()
                 }
             }
         }
@@ -129,7 +135,7 @@ fun FitnessScreen(navController: NavController) {
                     verticalArrangement = Arrangement.spacedBy(16.dp),
                     horizontalAlignment = Alignment.Start
                 ) {
-                    // Add more content related to "Monthly Progress" here
+                    MonthlyProgress()
                 }
             }
         }
@@ -144,6 +150,11 @@ fun StatItem(
     minValue: Int,
     maxValue: Int
 ) {
+    val progress by animateFloatAsState(
+        targetValue = (value - minValue).toFloat() / (maxValue - minValue),
+        animationSpec = tween(durationMillis = 1000)
+    )
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -161,7 +172,7 @@ fun StatItem(
         ) {
             Text(text = label, style = MaterialTheme.typography.bodyLarge)
             LinearProgressIndicator(
-                progress = (value - minValue).toFloat() / (maxValue - minValue),
+                progress = progress,
                 modifier = Modifier.fillMaxWidth()
             )
             Row(
@@ -171,6 +182,175 @@ fun StatItem(
                 Text(text = "$minValue", style = MaterialTheme.typography.bodySmall)
                 Text(text = "$value", style = MaterialTheme.typography.bodySmall, color = Color.Green)
                 Text(text = "$maxValue", style = MaterialTheme.typography.bodySmall)
+            }
+        }
+    }
+}
+
+@Composable
+fun WeeklyProgress() {
+    val weeklyData = listOf(
+        "Mon" to 7000,
+        "Tue" to 8000,
+        "Wed" to 7500,
+        "Thu" to 9000,
+        "Fri" to 8500,
+        "Sat" to 9500,
+        "Sun" to 10000
+    )
+
+    val totalSteps = weeklyData.sumOf { it.second }
+    val maxSteps = weeklyData.maxOf { it.second }
+    val progress by animateFloatAsState(targetValue = totalSteps / (7 * 10000f), animationSpec = tween(durationMillis = 1000))
+
+    Column {
+        weeklyData.forEach { (day, steps) ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = day, style = MaterialTheme.typography.bodyLarge)
+                val dayProgress by animateFloatAsState(targetValue = steps / 10000f, animationSpec = tween(durationMillis = 1000))
+                LinearProgressIndicator(
+                    progress = dayProgress,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 8.dp)
+                )
+                Text(text = "$steps steps", style = MaterialTheme.typography.bodySmall)
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(text = "Overall Progress", style = MaterialTheme.typography.bodyLarge)
+        Spacer(modifier = Modifier.height(8.dp))
+        Canvas(modifier = Modifier
+            .fillMaxWidth()
+            .height(150.dp) // Adjusted height for better fit
+            .padding(16.dp)) {
+            val canvasSize = size.minDimension
+            val strokeWidth = 20f
+            drawIntoCanvas { canvas ->
+                val paint = Paint().apply {
+                    color = Color.Gray
+                    this.strokeWidth = strokeWidth
+                    style = PaintingStyle.Stroke
+                }
+
+                // Draw background arc
+                canvas.drawArc(
+                    Rect(
+                        left = canvasSize / 4,
+                        top = canvasSize / 4,
+                        right = 3 * canvasSize / 4,
+                        bottom = 3 * canvasSize / 4
+                    ),
+                    startAngle = 0f,
+                    sweepAngle = 360f,
+                    useCenter = false,
+                    paint = paint
+                )
+
+                paint.color = Color.Green
+                // Draw progress arc
+                canvas.drawArc(
+                    Rect(
+                        left = canvasSize / 4,
+                        top = canvasSize / 4,
+                        right = 3 * canvasSize / 4,
+                        bottom = 3 * canvasSize / 4
+                    ),
+                    startAngle = -90f,
+                    sweepAngle = 360 * progress,
+                    useCenter = false,
+                    paint = paint
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun MonthlyProgress() {
+    val monthlyData = listOf(
+        "Week 1" to 45000,
+        "Week 2" to 50000,
+        "Week 3" to 52000,
+        "Week 4" to 48000
+    )
+
+    val totalSteps = monthlyData.sumOf { it.second }
+    val maxSteps = monthlyData.maxOf { it.second }
+    val progress by animateFloatAsState(targetValue = totalSteps / (4 * 70000f), animationSpec = tween(durationMillis = 1000))
+
+    Column {
+        monthlyData.forEach { (week, steps) ->
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(text = week, style = MaterialTheme.typography.bodyLarge)
+                val weekProgress by animateFloatAsState(targetValue = steps / 70000f, animationSpec = tween(durationMillis = 1000))
+                LinearProgressIndicator(
+                    progress = weekProgress,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(horizontal = 8.dp)
+                )
+                Text(text = "$steps steps", style = MaterialTheme.typography.bodySmall)
+            }
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
+        Text(text = "Overall Progress", style = MaterialTheme.typography.bodyLarge)
+        Spacer(modifier = Modifier.height(8.dp))
+        Canvas(modifier = Modifier
+            .fillMaxWidth()
+            .height(150.dp) // Adjusted height for better fit
+            .padding(16.dp)) {
+            val canvasSize = size.minDimension
+            val strokeWidth = 20f
+            drawIntoCanvas { canvas ->
+                val paint = Paint().apply {
+                    color = Color.Gray
+                    this.strokeWidth = strokeWidth
+                    style = PaintingStyle.Stroke
+                }
+
+                // Draw background arc
+                canvas.drawArc(
+                    Rect(
+                        left = canvasSize / 4,
+                        top = canvasSize / 4,
+                        right = 3 * canvasSize / 4,
+                        bottom = 3 * canvasSize / 4
+                    ),
+                    startAngle = 0f,
+                    sweepAngle = 360f,
+                    useCenter = false,
+                    paint = paint
+                )
+
+                paint.color = Color.Blue
+                // Draw progress arc
+                canvas.drawArc(
+                    Rect(
+                        left = canvasSize / 4,
+                        top = canvasSize / 4,
+                        right = 3 * canvasSize / 4,
+                        bottom = 3 * canvasSize / 4
+                    ),
+                    startAngle = -90f,
+                    sweepAngle = 360 * progress,
+                    useCenter = false,
+                    paint = paint
+                )
             }
         }
     }

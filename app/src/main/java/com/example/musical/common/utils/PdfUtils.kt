@@ -4,10 +4,13 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.pdf.PdfDocument
 import android.net.Uri
+import androidx.core.content.FileProvider
 import java.io.File
 import java.io.FileOutputStream
 
 object PdfUtils {
+
+    private const val APPLICATION_ID = "com.example.musical" // Replace with your actual application ID
 
     fun createAndOpenPdf(context: Context, title: String, description: String) {
         val pdfDocument = PdfDocument()
@@ -27,10 +30,10 @@ object PdfUtils {
         pdfDocument.writeTo(FileOutputStream(file))
         pdfDocument.close()
 
-        val pdfUri: Uri = Uri.fromFile(file)
+        val pdfUri: Uri = FileProvider.getUriForFile(context, "$APPLICATION_ID.provider", file)
         val intent = Intent(Intent.ACTION_VIEW).apply {
             setDataAndType(pdfUri, "application/pdf")
-            flags = Intent.FLAG_ACTIVITY_NO_HISTORY
+            flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
         }
         context.startActivity(intent)
     }
@@ -53,11 +56,12 @@ object PdfUtils {
         pdfDocument.writeTo(FileOutputStream(file))
         pdfDocument.close()
 
-        val pdfUri: Uri = Uri.fromFile(file)
+        val pdfUri: Uri = FileProvider.getUriForFile(context, "$APPLICATION_ID.provider", file)
         val shareIntent = Intent().apply {
             action = Intent.ACTION_SEND
             type = "application/pdf"
             putExtra(Intent.EXTRA_STREAM, pdfUri)
+            flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
         }
         context.startActivity(Intent.createChooser(shareIntent, "Share Report"))
     }

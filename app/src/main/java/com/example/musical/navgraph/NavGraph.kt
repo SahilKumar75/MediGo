@@ -1,5 +1,7 @@
 package com.example.musical.navgraph
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
@@ -21,14 +23,40 @@ import com.example.musical.presentation.chat.components.MedChatHomeScreen
 import com.example.musical.presentation.chat.components.MedChatScreen
 import com.example.musical.presentation.help.Help
 import com.example.musical.presentation.home.HomeScreen
+import com.example.musical.ui.theme.*
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Navigation(navController: NavController, viewModel: MainViewModel, pd: PaddingValues) {
     NavHost(
         navController = navController as NavHostController,
-        startDestination = Screen.BottomScreen.Home.bRoute,
+        startDestination = "onboarding",
         modifier = Modifier.padding(pd)
     ) {
+        composable("onboarding") {
+            OnboardingScreen(navController)
+        }
+        composable("loginSignup") {
+            LoginSignupScreen(navController)
+        }
+        composable("doctorLogin") {
+            DoctorLoginScreen(navController)
+        }
+        composable("patientLogin") {
+            PatientLoginScreen(navController)
+        }
+        composable("signup") {
+            SignupScreen(navController)
+        }
+        composable("doctorSignup") {
+            DoctorSignupScreen(navController)
+        }
+        composable("patientSignup") {
+            PatientSignupScreen(navController)
+        }
+        composable("home") {
+            HomeScreen(navController)
+        }
         composable(Screen.BottomScreen.Home.bRoute) {
             HomeScreen(navController)
         }

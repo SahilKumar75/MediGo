@@ -83,6 +83,9 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui.graphics)
     implementation(libs.protolite.well.known.types)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.recyclerview)
+    implementation(libs.androidx.viewpager2)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -98,6 +101,9 @@ dependencies {
     implementation (libs.gson)
     implementation (libs.accompanist.systemuicontroller)
     implementation (libs.coil.compose)
+    implementation (libs.accompanist.pager.v02413rc)
+    implementation (libs.accompanist.pager.indicators.v02413rc)
+
 
 
 }

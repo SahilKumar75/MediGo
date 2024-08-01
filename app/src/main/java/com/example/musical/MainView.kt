@@ -1,5 +1,7 @@
 package com.example.musical
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -29,6 +31,7 @@ import com.example.musical.presentation.accounts.AccountDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+@RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
 fun MainView() {
@@ -54,8 +57,17 @@ fun MainView() {
         Screen.DrawerScreen.Subscription.route
     )
 
+    // List of routes where the bottom bar should be shown
+    val showBottomBarRoutes = listOf(
+        Screen.BottomScreen.Home.bRoute,
+        Screen.BottomScreen.Reports.bRoute,
+        Screen.BottomScreen.Help.bRoute,
+        Screen.BottomScreen.Fitness.bRoute
+    )
+
+    // Bottom bar content
     val bottomBar: @Composable () -> Unit = {
-        if (currentScreen is Screen.DrawerScreen || currentScreen is Screen.BottomScreen) {
+        if (currentRoute in showBottomBarRoutes) {
             Surface(
                 shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
                 modifier = Modifier.fillMaxWidth()
@@ -97,6 +109,20 @@ fun MainView() {
         }
     }
 
+    // Check if user is logged in (this is a placeholder, replace with actual logic)
+    val isLoggedIn = remember { mutableStateOf(false) }
+
+    // If not logged in, navigate to onboarding screen
+    LaunchedEffect(Unit) {
+        if (!isLoggedIn.value) {
+            navController.navigate("onboarding") {
+                popUpTo(navController.graph.startDestinationId) {
+                    inclusive = true
+                }
+            }
+        }
+    }
+
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
@@ -105,7 +131,7 @@ fun MainView() {
                     title = {
                         if (currentScreen is Screen.BottomScreen.Home) {
                             Text(
-                                text = "Hi, $username",
+                                text = "Hello, $username",
                                 fontSize = 24.sp,
                                 fontWeight = FontWeight.Bold,
                                 color = Color.Black

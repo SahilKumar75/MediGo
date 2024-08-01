@@ -177,6 +177,7 @@ object PdfUtils {
         context.startActivity(Intent.createChooser(shareIntent, "Share Report"))
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun createAndOpenUrineReportPdf(context: Context, title: String, description: String) {
         val pdfDocument = PdfDocument()
         val pageInfo = PdfDocument.PageInfo.Builder(595, 842, 1).create()

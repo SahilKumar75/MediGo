@@ -37,7 +37,7 @@ fun FitnessScreen(navController: NavController) {
                 Text(
                     text = "Your Stats",
                     style = MaterialTheme.typography.titleMedium,
-                    color = Color.White,
+                    color = Color.Black,
                     modifier = Modifier.align(Alignment.CenterStart)
                 )
             }
@@ -98,7 +98,7 @@ fun FitnessScreen(navController: NavController) {
                 Text(
                     text = "Weekly Progress",
                     style = MaterialTheme.typography.titleMedium,
-                    color = Color.White,
+                    color = Color.Black,
                     modifier = Modifier.align(Alignment.CenterStart)
                 )
             }
@@ -128,7 +128,7 @@ fun FitnessScreen(navController: NavController) {
                 Text(
                     text = "Monthly Progress",
                     style = MaterialTheme.typography.titleMedium,
-                    color = Color.White,
+                    color = Color.Black,
                     modifier = Modifier.align(Alignment.CenterStart)
                 )
             }
@@ -168,9 +168,9 @@ fun StatItem(imageRes: Int, label: String, value: Int, minValue: Int, maxValue: 
         )
         Spacer(modifier = Modifier.width(16.dp))
         Column {
-            Text(text = label, color = Color.White, style = MaterialTheme.typography.bodyLarge)
+            Text(text = label, color = Color.White, style = MaterialTheme.typography.titleLarge)
             Spacer(modifier = Modifier.height(4.dp))
-            Text(text = "$value", color = color, style = MaterialTheme.typography.bodyMedium)
+            Text(text = "$value", color = color, style = MaterialTheme.typography.bodyLarge)
             Spacer(modifier = Modifier.height(4.dp))
             LinearProgressIndicator(
                 progress = (value - minValue) / (maxValue - minValue).toFloat(),
@@ -231,7 +231,7 @@ fun WeeklyProgress() {
                         android.graphics.Paint().apply {
                             color = android.graphics.Color.WHITE
                             textAlign = android.graphics.Paint.Align.CENTER
-                            textSize = 30f
+                            textSize = 36f // Increased text size
                         }
                     )
                 }
@@ -239,7 +239,7 @@ fun WeeklyProgress() {
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-        Text(text = "Overall Progress", style = MaterialTheme.typography.bodyLarge, color = Color.White)
+        Text(text = "Overall Progress", style = MaterialTheme.typography.headlineSmall, color = Color.White) // Increased text size
         Spacer(modifier = Modifier.height(8.dp))
         Canvas(modifier = Modifier
             .size(200.dp)
@@ -286,6 +286,7 @@ fun WeeklyProgress() {
     }
 }
 
+
 @Composable
 fun MonthlyProgress() {
     val monthlyData = listOf(
@@ -323,7 +324,7 @@ fun MonthlyProgress() {
                     color = Color.Blue,
                     start = Offset(x = i * spacing, y = maxY - yPositions[i]),
                     end = Offset(x = (i + 1) * spacing, y = maxY - yPositions[i + 1]),
-                    strokeWidth = 5f
+                    strokeWidth = 15f
                 )
             }
 
@@ -342,7 +343,7 @@ fun MonthlyProgress() {
                         android.graphics.Paint().apply {
                             color = android.graphics.Color.WHITE
                             textAlign = android.graphics.Paint.Align.CENTER
-                            textSize = 30f
+                            textSize = 36f // Increased text size
                         }
                     )
                 }
@@ -350,7 +351,7 @@ fun MonthlyProgress() {
         }
 
         Spacer(modifier = Modifier.height(16.dp))
-        Text(text = "Overall Progress", style = MaterialTheme.typography.bodyLarge, color = Color.White)
+        Text(text = "Overall Progress", style = MaterialTheme.typography.headlineSmall, color = Color.White) // Increased text style
         Spacer(modifier = Modifier.height(8.dp))
         Canvas(modifier = Modifier
             .size(200.dp)
@@ -396,3 +397,4 @@ fun MonthlyProgress() {
         }
     }
 }
+

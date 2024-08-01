@@ -1,6 +1,8 @@
 package com.example.musical.common.utils
 
 import android.content.Context
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -25,6 +27,7 @@ data class MedicalReport(
     val fileName: String
 )
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Report() {
     val context = LocalContext.current
@@ -86,6 +89,7 @@ fun SectionHeader(title: String, textStyle: TextStyle) {
     Spacer(modifier = Modifier.height(8.dp))
 }
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ReportCard(report: MedicalReport, context: Context, textStyle: TextStyle, cardBackgroundColor: Color) {
     Card(
@@ -108,7 +112,13 @@ fun ReportCard(report: MedicalReport, context: Context, textStyle: TextStyle, ca
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                TextButton(onClick = { PdfUtils.createAndOpenPdf(context, report.title, report.description) }) {
+                TextButton(onClick = {
+                    when {
+                        report.title.contains("Blood Report") -> PdfUtils.createAndOpenBloodReportPdf(context)
+                        report.title.contains("Urine Report") -> PdfUtils.createAndOpenUrineReportPdf(context, report.title, report.description)
+                        report.title.contains("X-Ray Report") -> PdfUtils.createAndOpenXRayReportPdf(context, report.title, report.description)
+                    }
+                }) {
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
@@ -125,7 +135,13 @@ fun ReportCard(report: MedicalReport, context: Context, textStyle: TextStyle, ca
                 Modifier
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
-                    .clickable { PdfUtils.createAndSharePdf(context, report.title, report.description) },
+                    .clickable {
+                        when {
+                            report.title.contains("Blood Report") -> PdfUtils.createAndShareBloodReportPdf(context)
+                            report.title.contains("Urine Report") -> PdfUtils.createAndShareUrineReportPdf(context, report.title, report.description)
+                            report.title.contains("X-Ray Report") -> PdfUtils.createAndShareXRayReportPdf(context, report.title, report.description)
+                        }
+                    },
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {

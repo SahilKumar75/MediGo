@@ -1,10 +1,12 @@
 package com.example.musical.presentation.chat
 
 import android.Manifest
+import android.app.Activity
+import android.content.Intent
 import android.content.pm.PackageManager
-import android.media.MediaRecorder
 import android.net.Uri
 import android.os.Environment
+import android.speech.RecognizerIntent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
@@ -25,11 +27,9 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
-import com.example.musical.R
 import com.example.musical.presentation.chat.components.ChatItem
 import com.google.gson.Gson
-import java.io.File
-import java.io.IOException
+import java.util.Locale
 
 data class Message(val text: String, val imageUri: Uri? = null, val fileUri: Uri? = null)
 
@@ -39,12 +39,7 @@ fun ChatScreen(navController: NavController, chatItemJson: String) {
     val chatItem = Gson().fromJson(chatItemJson, ChatItem::class.java)
     var message by remember { mutableStateOf(TextFieldValue("")) }
     val messages = remember { mutableStateListOf<Message>() }
-    var isRecording by remember { mutableStateOf(false) }
-    var recorder: MediaRecorder? by remember { mutableStateOf(null) }
-
     val context = LocalContext.current
-    val outputDir = context.getExternalFilesDir(Environment.DIRECTORY_MUSIC)
-    val outputFile = File(outputDir, "recorded_audio.3gp")
 
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
@@ -72,38 +67,33 @@ fun ChatScreen(navController: NavController, chatItemJson: String) {
         }
     }
 
-    fun startRecording() {
+    val speechToTextLauncher = rememberLauncherForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val data = result.data
+            val speechText = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
+            if (!speechText.isNullOrEmpty()) {
+                messages.add(Message(text = speechText[0]))
+            }
+        }
+    }
+
+    fun startSpeechToText() {
         if (ContextCompat.checkSelfPermission(
                 context,
                 Manifest.permission.RECORD_AUDIO
             ) == PackageManager.PERMISSION_GRANTED
         ) {
-            recorder = MediaRecorder().apply {
-                setAudioSource(MediaRecorder.AudioSource.MIC)
-                setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP)
-                setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB)
-                setOutputFile(outputFile.absolutePath)
-                try {
-                    prepare()
-                    start()
-                    isRecording = true
-                } catch (e: IOException) {
-                    e.printStackTrace()
-                }
+            val intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+                putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+                putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+                putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak now...")
             }
+            speechToTextLauncher.launch(intent)
         } else {
             permissionLauncher.launch(Manifest.permission.RECORD_AUDIO)
         }
-    }
-
-    fun stopRecording() {
-        recorder?.apply {
-            stop()
-            release()
-        }
-        recorder = null
-        isRecording = false
-        messages.add(Message(text = "Audio recording", fileUri = Uri.fromFile(outputFile)))
     }
 
     Scaffold(
@@ -161,17 +151,13 @@ fun ChatScreen(navController: NavController, chatItemJson: String) {
                 ) {
                     IconButton(
                         onClick = {
-                            if (isRecording) {
-                                stopRecording()
-                            } else {
-                                startRecording()
-                            }
+                            startSpeechToText()
                         }
                     ) {
                         Icon(
                             imageVector = Icons.Default.Mic,
-                            contentDescription = if (isRecording) "Stop Recording" else "Record Audio",
-                            tint = if (isRecording) Color.Red else Color.Black
+                            contentDescription = "Start Speech to Text",
+                            tint = Color.Black
                         )
                     }
                     IconButton(onClick = { imagePickerLauncher.launch("image/*") }) {

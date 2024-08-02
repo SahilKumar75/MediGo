@@ -41,6 +41,7 @@ fun ChatScreen(navController: NavController, chatItemJson: String) {
     val messages = remember { mutableStateListOf<Message>() }
     val context = LocalContext.current
 
+
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->

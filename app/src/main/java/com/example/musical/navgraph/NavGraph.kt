@@ -22,7 +22,7 @@ import com.example.musical.presentation.chat.ChatScreen
 import com.example.musical.presentation.chat.components.MedChatHomeScreen
 import com.example.musical.presentation.chat.components.MedChatScreen
 import com.example.musical.presentation.help.Help
-import com.example.musical.presentation.home.HomeScreen
+import com.example.musical.presentation.home.PatientHomeScreen
 import com.example.musical.ui.theme.*
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -55,10 +55,10 @@ fun Navigation(navController: NavController, viewModel: MainViewModel, pd: Paddi
             PatientSignupScreen(navController)
         }
         composable("home") {
-            HomeScreen(navController)
+            PatientHomeScreen(navController)
         }
         composable(Screen.BottomScreen.Home.bRoute) {
-            HomeScreen(navController)
+            PatientHomeScreen(navController)
         }
         composable(Screen.BottomScreen.Reports.bRoute) {
             Report()

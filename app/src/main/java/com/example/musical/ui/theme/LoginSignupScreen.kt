@@ -357,5 +357,3 @@ fun PatientSignupScreen(navController: NavController) {
         }
     }
 }
-
-

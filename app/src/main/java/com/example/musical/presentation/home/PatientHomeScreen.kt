@@ -26,7 +26,7 @@ import kotlin.math.abs
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen(navController: NavController) {
+fun PatientHomeScreen(navController: NavController) {
     var offsetX by remember { mutableStateOf(0f) }
     val medications = remember {
         mutableStateListOf(

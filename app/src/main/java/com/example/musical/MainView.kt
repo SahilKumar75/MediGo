@@ -10,7 +10,9 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Chat
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -31,6 +33,7 @@ import com.example.musical.presentation.accounts.AccountDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
+
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterialApi::class)
 @Composable
@@ -47,6 +50,10 @@ fun MainView() {
     val title = remember { mutableStateOf(currentScreen.title) }
     val username = viewModel.username.value
 
+    val modalSheetState = rememberModalBottomSheetState(
+        initialValue = ModalBottomSheetValue.Hidden,
+        confirmValueChange = { it != ModalBottomSheetValue.HalfExpanded }
+    )
     // List of routes where the top bar should be shown
     val showTopBarRoutes = listOf(
         Screen.BottomScreen.Home.bRoute,
@@ -54,57 +61,39 @@ fun MainView() {
         Screen.BottomScreen.Help.bRoute,
         Screen.BottomScreen.Fitness.bRoute,
         Screen.DrawerScreen.Account.route,
-        Screen.DrawerScreen.Subscription.route
+        Screen.DrawerScreen.Subscription.route,
+        Screen.DoctorHomeScreen.route,
+        Screen.BottomScreen.Referral.bRoute,
+        Screen.BottomScreen.DoctorReports.bRoute,
+        Screen.BottomScreen.DoctorHomeScreen.bRoute,
+        Screen.PatientHomeScreen.route
     )
 
-    // List of routes where the bottom bar should be shown
-    val showBottomBarRoutes = listOf(
+    // List of routes where the bottom bar should be shown for patients
+    val showPatientBottomBarRoutes = listOf(
         Screen.BottomScreen.Home.bRoute,
         Screen.BottomScreen.Reports.bRoute,
         Screen.BottomScreen.Help.bRoute,
-        Screen.BottomScreen.Fitness.bRoute
+        Screen.BottomScreen.Fitness.bRoute,
+        Screen.PatientHomeScreen.route
+    )
+
+    // List of routes where the bottom bar should be shown for doctors
+    val showDoctorBottomBarRoutes = listOf( // Define doctor's bottom navigation routes here
+        Screen.DoctorHomeScreen.route,
+        Screen.BottomScreen.DoctorHomeScreen.bRoute,
+        Screen.BottomScreen.DoctorReports.bRoute,
+        Screen.BottomScreen.Referral.bRoute
     )
 
     // Bottom bar content
     val bottomBar: @Composable () -> Unit = {
-        if (currentRoute in showBottomBarRoutes) {
-            Surface(
-                shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                BottomNavigation(
-                    modifier = Modifier.wrapContentSize(),
-                    backgroundColor = Color(0xFF006eff),
-                ) {
-                    screensInBottom.forEach { item ->
-                        val isSelected = currentRoute == item.bRoute
-                        val tint = if (isSelected) Color.White else Color.Black
-                        BottomNavigationItem(
-                            selected = currentRoute == item.bRoute,
-                            onClick = {
-                                navController.navigate(item.bRoute) {
-                                    launchSingleTop = true
-                                    restoreState = true
-                                    popUpTo(navController.graph.startDestinationId) {
-                                        saveState = true
-                                    }
-                                }
-                                viewModel.setCurrentScreen(item)
-                                title.value = item.bTitle
-                            },
-                            icon = {
-                                Icon(
-                                    painter = painterResource(id = item.icon),
-                                    contentDescription = item.bTitle,
-                                    tint = tint
-                                )
-                            },
-                            label = { Text(text = item.bTitle, color = tint) },
-                            selectedContentColor = Color.White,
-                            unselectedContentColor = Color.Black
-                        )
-                    }
-                }
+        when (currentRoute) {
+            in showPatientBottomBarRoutes -> {
+                PatientBottomBar(navController, currentRoute, viewModel, title)
+            }
+            in showDoctorBottomBarRoutes -> {
+                DoctorBottomBar(navController, currentRoute, viewModel, title)
             }
         }
     }
@@ -143,6 +132,18 @@ fun MainView() {
                     backgroundColor = Color(0xFFF5F5F5),
                     elevation = 0.dp,
                     actions = {
+                        IconButton(
+                            onClick = {
+                                scope.launch {
+                                    if (modalSheetState.isVisible)
+                                        modalSheetState.hide()
+                                    else
+                                        modalSheetState.show()
+                                }
+                            }
+                        ) {
+                            Icon(imageVector = Icons.Default.MoreVert, contentDescription = null, tint = Color.Black)
+                        }
                         if (currentRoute == Screen.BottomScreen.Home.bRoute) {
                             IconButton(
                                 onClick = {
@@ -152,8 +153,29 @@ fun MainView() {
                                 Icon(imageVector = Icons.Default.Chat, contentDescription = null, tint = Color.Black)
                             }
                         }
+                    },
+                    navigationIcon = {
+                        IconButton(onClick = {
+                            scope.launch {
+                                scaffoldState.drawerState.open()
+                            }
+                        }) {
+                            Icon(imageVector = Icons.Default.AccountCircle, contentDescription = "Menu", tint = Color.Black)
+                        }
                     }
+//                    actions = {
+//                        if (currentRoute == Screen.BottomScreen.Home.bRoute) {
+//                            IconButton(
+//                                onClick = {
+//                                    navController.navigate("chatRoute")
+//                                }
+//                            ) {
+//                                Icon(imageVector = Icons.Default.Chat, contentDescription = null, tint = Color.Black)
+//                            }
+//                        }
+//                    }
                 )
+
             }
         },
         bottomBar = bottomBar,
@@ -175,11 +197,12 @@ fun MainView() {
                 }
             }
         }
-    ) {
-        Navigation(navController = navController, viewModel = viewModel, pd = it)
+    ) { padding ->
+        Navigation(navController = navController, viewModel = viewModel, pd = padding)
         AccountDialog(dialogOpen = dialogOpen)
     }
 }
+
 
 @Composable
 fun DrawerItem(
@@ -208,3 +231,93 @@ fun DrawerItem(
         )
     }
 }
+
+@Composable
+fun PatientBottomBar(navController: NavController, currentRoute: String?, viewModel: MainViewModel, title: MutableState<String>) {
+    Surface(
+        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        BottomNavigation(
+            modifier = Modifier.wrapContentSize(),
+            backgroundColor = Color(0xFF006eff),
+        ) {
+            screensInBottom.forEach { item ->
+                val isSelected = currentRoute == item.bRoute
+                val tint = if (isSelected) Color.White else Color.Black
+                BottomNavigationItem(
+                    selected = currentRoute == item.bRoute,
+                    onClick = {
+                        navController.navigate(item.bRoute) {
+                            launchSingleTop = true
+                            restoreState = true
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                        }
+                        viewModel.setCurrentScreen(item)
+                        title.value = item.bTitle
+                    },
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = item.icon),
+                            contentDescription = item.bTitle,
+                            tint = tint
+                        )
+                    },
+                    label = { Text(text = item.bTitle, color = tint) },
+                    selectedContentColor = Color.White,
+                    unselectedContentColor = Color.Black
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun DoctorBottomBar(navController: NavController, currentRoute: String?, viewModel: MainViewModel, title: MutableState<String>) {
+    val doctorScreensInBottom = listOf(
+        Screen.BottomScreen.DoctorHomeScreen,
+        Screen.BottomScreen.DoctorReports,
+        Screen.BottomScreen.Referral // Renamed Help to Referral
+    )
+    Surface(
+        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        BottomNavigation(
+            modifier = Modifier.wrapContentSize(),
+            backgroundColor = Color(0xFF006eff),
+        ) {
+            doctorScreensInBottom.forEach { item ->
+                val isSelected = currentRoute == item.bRoute
+                val tint = if (isSelected) Color.White else Color.Black
+                BottomNavigationItem(
+                    selected = currentRoute == item.bRoute,
+                    onClick = {
+                        navController.navigate(item.bRoute) {
+                            launchSingleTop = true
+                            restoreState = true
+                            popUpTo(navController.graph.startDestinationId) {
+                                saveState = true
+                            }
+                        }
+                        viewModel.setCurrentScreen(item)
+                        title.value = item.bTitle
+                    },
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = item.icon),
+                            contentDescription = item.bTitle,
+                            tint = tint
+                        )
+                    },
+                    label = { Text(text = item.bTitle, color = tint) },
+                    selectedContentColor = Color.White,
+                    unselectedContentColor = Color.Black
+                )
+            }
+        }
+    }
+}
+

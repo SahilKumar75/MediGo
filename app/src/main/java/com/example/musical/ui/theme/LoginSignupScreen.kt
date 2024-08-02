@@ -129,8 +129,6 @@ fun SignupScreen(navController: NavController) {
     }
 }
 
-
-
 @Composable
 fun DoctorLoginScreen(navController: NavController) {
     var username by remember { mutableStateOf("") }
@@ -169,7 +167,7 @@ fun DoctorLoginScreen(navController: NavController) {
         Button(onClick = {
             if (username.isNotBlank() && password.isNotBlank()) {
                 // Implement your login logic here
-                navController.navigate("home")
+                navController.navigate("doctorHome")
             } else {
                 errorMessage = "Please enter both username and password"
             }
@@ -182,7 +180,6 @@ fun DoctorLoginScreen(navController: NavController) {
         }
     }
 }
-
 
 @Composable
 fun PatientLoginScreen(navController: NavController) {
@@ -222,7 +219,7 @@ fun PatientLoginScreen(navController: NavController) {
         Button(onClick = {
             if (username.isNotBlank() && password.isNotBlank()) {
                 // Implement your login logic here
-                navController.navigate("home")
+                navController.navigate("patientHome")
             } else {
                 errorMessage = "Please enter both username and password"
             }
@@ -282,7 +279,7 @@ fun DoctorSignupScreen(navController: NavController) {
         Button(onClick = {
             if (username.isNotBlank() && email.isNotBlank() && password.isNotBlank()) {
                 // Implement your signup logic here
-                navController.navigate("home")
+                navController.navigate("doctorHome")
             } else {
                 errorMessage = "Please enter all details"
             }
@@ -295,8 +292,6 @@ fun DoctorSignupScreen(navController: NavController) {
         }
     }
 }
-
-
 
 @Composable
 fun PatientSignupScreen(navController: NavController) {
@@ -344,7 +339,7 @@ fun PatientSignupScreen(navController: NavController) {
         Button(onClick = {
             if (username.isNotBlank() && email.isNotBlank() && password.isNotBlank()) {
                 // Implement your signup logic here
-                navController.navigate("home")
+                navController.navigate("patientHome")
             } else {
                 errorMessage = "Please enter all details"
             }
@@ -357,3 +352,4 @@ fun PatientSignupScreen(navController: NavController) {
         }
     }
 }
+

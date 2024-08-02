@@ -11,55 +11,61 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.filled.Chat
+import com.example.musical.DrawerItem
 import com.example.musical.R
 import com.example.musical.common.utils.Doctor
 import com.example.musical.common.utils.DoctorDetailsCard
+import com.example.musical.navgraph.screensInDrawer
 import com.example.musical.presentation.home.components.ImageCarousel
 import com.example.musical.presentation.home.components.MedItem
 import com.example.musical.presentation.home.components.Medication
+import kotlinx.coroutines.launch
 import kotlin.math.abs
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PatientHomeScreen(navController: NavController) {
+fun PatientHomeScreen(navController: NavController, padding: PaddingValues) {
     var offsetX by remember { mutableStateOf(0f) }
-    val medications = remember {
-        mutableStateListOf(
-            Medication(R.drawable.med1, "Medicine 1", "1 tablet in the morning"),
-            Medication(R.drawable.med2, "Medicine 2", "2 tablets after lunch"),
-            Medication(R.drawable.med3, "Medicine 3", "1 tablet before bed")
-        )
-    }
-    val doctor = Doctor(
-        imageRes = R.drawable.doc_image, // Replace with your doctor image resource
-        name = "Dr. John Doe",
-        specialty = "Cardiologist",
-        contact = "+1 234 567 890",
-        availability = "Mon - Fri, 9 AM - 5 PM"
-    )
 
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {
-                    navController.navigate("medChatRoute")
-                },
-                containerColor = MaterialTheme.colorScheme.primary,
-                contentColor = Color.White
+                onClick = { navController.navigate("chatRoute") },
+                containerColor = Color.White
             ) {
-                Icon(Icons.Filled.MedicalServices, contentDescription = "Diagnose")
+                Icon(
+                    imageVector = Icons.Filled.Chat,
+                    contentDescription = "Chat"
+                )
             }
         },
         content = { padding ->
+            val medications = remember {
+                mutableStateListOf(
+                    Medication(R.drawable.med1, "Para", "1 tablet in the morning"),
+                    Medication(R.drawable.med2, "Medicine 2", "2 tablets after lunch"),
+                    Medication(R.drawable.med3, "Medicine 3", "1 tablet before bed")
+                )
+            }
+            val doctor = Doctor(
+                imageRes = R.drawable.doc_image, // Replace with your doctor image resource
+                name = "Dr. John Doe",
+                specialty = "Cardiologist",
+                contact = "+1 234 567 890",
+                availability = "Mon - Fri, 9 AM - 5 PM"
+            )
+
             Box(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Color(0xFFF5F5F5))
+                    .padding(padding)
                     .pointerInput(Unit) {
                         detectHorizontalDragGestures { change, dragAmount ->
                             offsetX += dragAmount
@@ -75,7 +81,6 @@ fun PatientHomeScreen(navController: NavController) {
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(padding)
                         .padding(top = 8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Top
@@ -149,6 +154,5 @@ fun PatientHomeScreen(navController: NavController) {
                     }
                 }
             }
-        }
-    )
+        })
 }

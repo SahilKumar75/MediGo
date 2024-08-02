@@ -13,7 +13,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.musical.MainViewModel
+import com.example.musical.common.utils.DoctorReport
 import com.example.musical.common.utils.FitnessScreen
+import com.example.musical.common.utils.ReferralScreen
 import com.example.musical.common.utils.Report
 import com.example.musical.presentation.accounts.AccountView
 import com.example.musical.presentation.accounts.LogOut
@@ -23,7 +25,14 @@ import com.example.musical.presentation.chat.components.MedChatHomeScreen
 import com.example.musical.presentation.chat.components.MedChatScreen
 import com.example.musical.presentation.help.Help
 import com.example.musical.presentation.home.PatientHomeScreen
-import com.example.musical.ui.theme.*
+import com.example.musical.presentation.home.DoctorHomeScreen
+import com.example.musical.ui.theme.DoctorLoginScreen
+import com.example.musical.ui.theme.DoctorSignupScreen
+import com.example.musical.ui.theme.LoginSignupScreen
+import com.example.musical.ui.theme.OnboardingScreen
+import com.example.musical.ui.theme.PatientLoginScreen
+import com.example.musical.ui.theme.PatientSignupScreen
+import com.example.musical.ui.theme.SignupScreen
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -54,11 +63,14 @@ fun Navigation(navController: NavController, viewModel: MainViewModel, pd: Paddi
         composable("patientSignup") {
             PatientSignupScreen(navController)
         }
-        composable("home") {
-            PatientHomeScreen(navController)
+        composable("patientHome") {
+            PatientHomeScreen(navController, pd)
+        }
+        composable("doctorHome") {
+            DoctorHomeScreen(navController, pd)
         }
         composable(Screen.BottomScreen.Home.bRoute) {
-            PatientHomeScreen(navController)
+            PatientHomeScreen(navController, pd)
         }
         composable(Screen.BottomScreen.Reports.bRoute) {
             Report()
@@ -68,6 +80,15 @@ fun Navigation(navController: NavController, viewModel: MainViewModel, pd: Paddi
         }
         composable(Screen.BottomScreen.Fitness.bRoute) {
             FitnessScreen(navController)
+        }
+        composable(Screen.BottomScreen.Referral.bRoute) {
+            ReferralScreen(navController)
+        }
+        composable(Screen.BottomScreen.DoctorReports.bRoute) {
+            DoctorReport(navController)
+        }
+        composable(Screen.BottomScreen.DoctorHomeScreen.bRoute) {
+            DoctorHomeScreen(navController, pd)
         }
         composable(Screen.DrawerScreen.Account.route) {
             AccountView()

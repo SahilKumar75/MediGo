@@ -13,6 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.musical.MainViewModel
+import com.example.musical.auth.ui.signup.RegisterScreen
 import com.example.musical.common.utils.*
 import com.example.musical.presentation.accounts.AccountView
 import com.example.musical.presentation.accounts.LogOut
@@ -31,7 +32,7 @@ import com.example.musical.ui.theme.*
 fun Navigation(navController: NavController, viewModel: MainViewModel, pd: PaddingValues) {
     NavHost(
         navController = navController as NavHostController,
-        startDestination = "onboarding",
+        startDestination = "signup",
         modifier = Modifier.padding(pd)
     ) {
         composable("onboarding") {
@@ -97,6 +98,9 @@ fun Navigation(navController: NavController, viewModel: MainViewModel, pd: Paddi
         }
         composable("patientReportForm"){
             PatientReportForm(navController)
+        }
+        composable("signup"){
+            RegisterScreen()
         }
         composable(
             route = "chat_screen",

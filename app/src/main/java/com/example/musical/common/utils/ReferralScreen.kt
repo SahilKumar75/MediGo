@@ -74,31 +74,6 @@ fun ReferralScreen(navController: NavController) {
 //                        }
                             }
                 }
-
-                item {
-                    androidx.compose.material3.Text(
-                        text = "Referred Patient",
-                        style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(start = 16.dp, top = 16.dp)
-                    )
-                    ElevatedCard(
-                        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(16.dp)
-                            .height(200.dp)
-                    ) {
-                        Column(
-                            modifier = Modifier.padding(16.dp),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            // Add more content related to "Your Doc" here
-                        }
-                    }
-                }
             }
         }
     }

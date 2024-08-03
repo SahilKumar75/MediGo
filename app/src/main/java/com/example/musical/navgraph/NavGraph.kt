@@ -5,7 +5,6 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.internal.composableLambda
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -14,13 +13,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.example.musical.MainViewModel
-import com.example.musical.common.utils.DoctorReport
-import com.example.musical.common.utils.FitnessScreen
-import com.example.musical.common.utils.ItemDescription
-import com.example.musical.common.utils.PatientReportForm
-import com.example.musical.common.utils.ReferralScreen
-import com.example.musical.common.utils.Report
-import com.example.musical.common.utils.getPatientlist
+import com.example.musical.common.utils.*
 import com.example.musical.presentation.accounts.AccountView
 import com.example.musical.presentation.accounts.LogOut
 import com.example.musical.presentation.chat.ChatHomeScreen
@@ -30,13 +23,8 @@ import com.example.musical.presentation.chat.components.MedChatScreen
 import com.example.musical.presentation.help.Help
 import com.example.musical.presentation.home.PatientHomeScreen
 import com.example.musical.presentation.home.DoctorHomeScreen
-import com.example.musical.ui.theme.DoctorLoginScreen
-import com.example.musical.ui.theme.DoctorSignupScreen
-import com.example.musical.ui.theme.LoginSignupScreen
-import com.example.musical.ui.theme.OnboardingScreen
-import com.example.musical.ui.theme.PatientLoginScreen
-import com.example.musical.ui.theme.PatientSignupScreen
-import com.example.musical.ui.theme.SignupScreen
+import com.example.musical.ui.theme.*
+
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -103,7 +91,6 @@ fun Navigation(navController: NavController, viewModel: MainViewModel, pd: Paddi
         composable("chatRoute") {
             ChatHomeScreen(navController = navController)
         }
-
         composable("medChatRoute") {
             MedChatHomeScreen(navController = navController)
         }
@@ -126,6 +113,12 @@ fun Navigation(navController: NavController, viewModel: MainViewModel, pd: Paddi
         ) { backStackEntry ->
             val chatId = backStackEntry.arguments?.getInt("chatId") ?: 0
             MedChatScreen(navController = navController, chatId = chatId)
+        }
+        composable("patientDiagnoseScreen") {
+            PatientDiagnoseScreen(navController)
+        }
+        composable("sessionUpdate") {
+            SessionUpdateScreen(navController)
         }
     }
 }

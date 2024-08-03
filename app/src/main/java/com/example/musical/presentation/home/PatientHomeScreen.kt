@@ -4,7 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MedicalServices
+import androidx.compose.material.icons.filled.Chat
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -17,16 +17,12 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.filled.Chat
-import com.example.musical.DrawerItem
 import com.example.musical.R
 import com.example.musical.common.utils.Doctor
 import com.example.musical.common.utils.DoctorDetailsCard
-import com.example.musical.navgraph.screensInDrawer
 import com.example.musical.presentation.home.components.ImageCarousel
 import com.example.musical.presentation.home.components.MedItem
 import com.example.musical.presentation.home.components.Medication
-import kotlinx.coroutines.launch
 import kotlin.math.abs
 
 @Composable
@@ -150,7 +146,9 @@ fun PatientHomeScreen(navController: NavController, padding: PaddingValues) {
                                 .fillMaxWidth()
                                 .padding(start = 16.dp, top = 16.dp)
                         )
-                        DoctorDetailsCard(doctor)
+                        DoctorDetailsCard(doctor) {
+                            navController.navigate("sessionUpdate")
+                        }
                     }
                 }
             }

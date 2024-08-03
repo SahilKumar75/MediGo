@@ -174,7 +174,11 @@ fun PatientReportForm(navController: NavHostController) {
                 onClick = { /* Handle form submission */ },
                 modifier = Modifier.align(Alignment.End)
             ) {
-                Text("Submit")
+                Text("Submit",modifier=Modifier.clickable{
+                    list.add(Patient1(name=name,img=R.drawable.profile_image, disease = diseasename, description = diseasedescription))
+                }
+
+                )
             }
         }
     }

@@ -23,8 +23,6 @@ import com.example.musical.presentation.chat.components.ChatItemView
 fun ChatHomeScreen(navController: NavController) {
     val chatItems = listOf(
         ChatItem(name = "John Doe", message = "Hey, how are you?", time = "12:45 PM", avatar = R.drawable.ic_avatar_placeholder),
-        ChatItem(name = "Jane Smith", message = "Let's catch up later!", time = "11:30 AM", avatar = R.drawable.ic_avatar_placeholder),
-        // Add more chat items here
     )
 
     Scaffold(

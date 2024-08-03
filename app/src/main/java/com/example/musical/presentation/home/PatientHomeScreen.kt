@@ -32,7 +32,7 @@ fun PatientHomeScreen(navController: NavController, padding: PaddingValues) {
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { navController.navigate("chatRoute") },
+                onClick = { navController.navigate("chat_screen") },
                 containerColor = Color.White
             ) {
                 Icon(

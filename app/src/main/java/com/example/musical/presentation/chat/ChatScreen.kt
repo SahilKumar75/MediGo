@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -27,28 +28,24 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
-import com.example.musical.presentation.chat.components.ChatItem
+import com.example.musical.presentation.chat.components.MessageBubble
 import com.google.gson.Gson
 import java.util.Locale
 
-data class Message(val text: String, val imageUri: Uri? = null, val fileUri: Uri? = null)
+data class Message(val text: String, val imageUri: Uri? = null, val fileUri: Uri? = null, val isUser: Boolean = false)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ChatScreen(navController: NavController, chatItemJson: String) {
-    val chatItem = Gson().fromJson(chatItemJson, ChatItem::class.java)
+fun ChatScreen(navController: NavController) {
     var message by remember { mutableStateOf(TextFieldValue("")) }
     val messages = remember { mutableStateListOf<Message>() }
     val context = LocalContext.current
-
 
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted: Boolean ->
         if (isGranted) {
-            // Permission granted
         } else {
-            // Permission denied
         }
     }
 
@@ -56,7 +53,7 @@ fun ChatScreen(navController: NavController, chatItemJson: String) {
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let {
-            messages.add(Message(text = "", imageUri = it))
+            messages.add(Message(text = "", imageUri = it, isUser = true))
         }
     }
 
@@ -64,7 +61,7 @@ fun ChatScreen(navController: NavController, chatItemJson: String) {
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let {
-            messages.add(Message(text = "", fileUri = it))
+            messages.add(Message(text = "", fileUri = it, isUser = true))
         }
     }
 
@@ -75,7 +72,7 @@ fun ChatScreen(navController: NavController, chatItemJson: String) {
             val data = result.data
             val speechText = data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)
             if (!speechText.isNullOrEmpty()) {
-                messages.add(Message(text = speechText[0]))
+                messages.add(Message(text = speechText[0], isUser = true))
             }
         }
     }
@@ -100,7 +97,7 @@ fun ChatScreen(navController: NavController, chatItemJson: String) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(chatItem.name) },
+                title = { Text("App Bot") },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
@@ -125,13 +122,16 @@ fun ChatScreen(navController: NavController, chatItemJson: String) {
                     contentPadding = PaddingValues(16.dp)
                 ) {
                     items(messages) { message ->
-                        Column(modifier = Modifier.padding(8.dp)) {
-                            Text(
-                                text = message.text,
-                                modifier = Modifier.padding(8.dp)
-                            )
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),
+                            horizontalAlignment = if (message.isUser) Alignment.End else Alignment.Start
+                        ) {
+                            if (message.text.isNotEmpty()) {
+                                MessageBubble(message = message.text, isSender = message.isUser)
+                            }
                             message.imageUri?.let {
-                                // Display the selected image
                                 Image(
                                     painter = rememberImagePainter(it),
                                     contentDescription = null,
@@ -148,13 +148,9 @@ fun ChatScreen(navController: NavController, chatItemJson: String) {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(4.dp) // Reduced spacing between icons
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
-                    IconButton(
-                        onClick = {
-                            startSpeechToText()
-                        }
-                    ) {
+                    IconButton(onClick = { startSpeechToText() }) {
                         Icon(
                             imageVector = Icons.Default.Mic,
                             contentDescription = "Start Speech to Text",
@@ -184,8 +180,9 @@ fun ChatScreen(navController: NavController, chatItemJson: String) {
                     )
                     Button(onClick = {
                         if (message.text.isNotEmpty()) {
-                            messages.add(Message(text = message.text))
+                            messages.add(Message(text = message.text, isUser = true))
                             message = TextFieldValue("")
+                            // Simulate bot response for demonstration
                         }
                     }) {
                         Text("Send")

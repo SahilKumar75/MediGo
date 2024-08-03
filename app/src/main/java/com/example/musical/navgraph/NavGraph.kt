@@ -5,6 +5,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.internal.composableLambda
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
@@ -15,8 +16,11 @@ import androidx.navigation.navArgument
 import com.example.musical.MainViewModel
 import com.example.musical.common.utils.DoctorReport
 import com.example.musical.common.utils.FitnessScreen
+import com.example.musical.common.utils.ItemDescription
+import com.example.musical.common.utils.PatientReportForm
 import com.example.musical.common.utils.ReferralScreen
 import com.example.musical.common.utils.Report
+import com.example.musical.common.utils.getPatientlist
 import com.example.musical.presentation.accounts.AccountView
 import com.example.musical.presentation.accounts.LogOut
 import com.example.musical.presentation.chat.ChatHomeScreen
@@ -99,8 +103,15 @@ fun Navigation(navController: NavController, viewModel: MainViewModel, pd: Paddi
         composable("chatRoute") {
             ChatHomeScreen(navController = navController)
         }
+
         composable("medChatRoute") {
             MedChatHomeScreen(navController = navController)
+        }
+        composable("doctor"){
+            DoctorReport(navController)
+        }
+        composable("patientReportForm"){
+            PatientReportForm(navController)
         }
         composable(
             route = "chat_screen/{chatItemJson}",

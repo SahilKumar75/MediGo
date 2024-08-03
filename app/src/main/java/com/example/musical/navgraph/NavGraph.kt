@@ -88,9 +88,7 @@ fun Navigation(navController: NavController, viewModel: MainViewModel, pd: Paddi
         composable(Screen.DrawerScreen.Subscription.route) {
             LogOut()
         }
-        composable("chatRoute") {
-            ChatHomeScreen(navController = navController)
-        }
+
         composable("medChatRoute") {
             MedChatHomeScreen(navController = navController)
         }
@@ -101,11 +99,9 @@ fun Navigation(navController: NavController, viewModel: MainViewModel, pd: Paddi
             PatientReportForm(navController)
         }
         composable(
-            route = "chat_screen/{chatItemJson}",
-            arguments = listOf(navArgument("chatItemJson") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val chatItemJson = backStackEntry.arguments?.getString("chatItemJson") ?: ""
-            ChatScreen(navController = navController, chatItemJson = chatItemJson)
+            route = "chat_screen",
+        ) {
+            ChatScreen(navController = navController)
         }
         composable(
             route = "medChatScreen/{chatId}",

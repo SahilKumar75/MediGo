@@ -121,3 +121,4 @@ fun getPatientlist(navController: NavController): MutableList<Patient> {
     // Add more patients as needed
     return list
 }
+

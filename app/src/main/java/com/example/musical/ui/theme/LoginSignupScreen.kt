@@ -1,32 +1,12 @@
 package com.example.musical.ui.theme
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.DropdownMenuItem
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.ArrowDropUp
-import androidx.compose.material3.Button
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -111,6 +91,7 @@ fun SignupScreen(navController: NavController) {
             ) {
                 roles.forEach { role ->
                     DropdownMenuItem(
+                        text = { Text(text = role) },
                         onClick = {
                             selectedRole = role
                             expanded = false
@@ -120,9 +101,7 @@ fun SignupScreen(navController: NavController) {
                                 navController.navigate("patientSignup")
                             }
                         }
-                    ) {
-                        Text(text = role)
-                    }
+                    )
                 }
             }
         }
@@ -131,58 +110,58 @@ fun SignupScreen(navController: NavController) {
 
 @Composable
 fun DoctorLoginScreen(navController: NavController) {
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var errorMessage by remember { mutableStateOf("") }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = "Doctor Login",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        OutlinedTextField(
-            value = username,
-            onValueChange = { username = it },
-            label = { Text("Username") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Password") },
-            modifier = Modifier.fillMaxWidth(),
-            visualTransformation = PasswordVisualTransformation()
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = {
+    LoginForm(
+        title = "Doctor Login",
+        onLogin = { username, password ->
+            // Implement your login logic here
             if (username.isNotBlank() && password.isNotBlank()) {
-                // Implement your login logic here
                 navController.navigate("doctorHome")
-            } else {
-                errorMessage = "Please enter both username and password"
             }
-        }) {
-            Text(text = "Login")
         }
-        if (errorMessage.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = errorMessage, color = Color.Red)
-        }
-    }
+    )
 }
 
 @Composable
 fun PatientLoginScreen(navController: NavController) {
+    LoginForm(
+        title = "Patient Login",
+        onLogin = { username, password ->
+            // Implement your login logic here
+            if (username.isNotBlank() && password.isNotBlank()) {
+                navController.navigate("patientHome")
+            }
+        }
+    )
+}
+
+@Composable
+fun DoctorSignupScreen(navController: NavController) {
+    SignupForm(
+        title = "Doctor Signup",
+        onSignup = { username, email, password ->
+            // Implement your signup logic here
+            if (username.isNotBlank() && email.isNotBlank() && password.isNotBlank()) {
+                navController.navigate("doctorHome")
+            }
+        }
+    )
+}
+
+@Composable
+fun PatientSignupScreen(navController: NavController) {
+    SignupForm(
+        title = "Patient Signup",
+        onSignup = { username, email, password ->
+            // Implement your signup logic here
+            if (username.isNotBlank() && email.isNotBlank() && password.isNotBlank()) {
+                navController.navigate("patientHome")
+            }
+        }
+    )
+}
+
+@Composable
+fun LoginForm(title: String, onLogin: (String, String) -> Unit) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var errorMessage by remember { mutableStateOf("") }
@@ -195,7 +174,7 @@ fun PatientLoginScreen(navController: NavController) {
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "Patient Login",
+            text = title,
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             color = Color.Black
@@ -218,8 +197,7 @@ fun PatientLoginScreen(navController: NavController) {
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = {
             if (username.isNotBlank() && password.isNotBlank()) {
-                // Implement your login logic here
-                navController.navigate("patientHome")
+                onLogin(username, password)
             } else {
                 errorMessage = "Please enter both username and password"
             }
@@ -234,7 +212,7 @@ fun PatientLoginScreen(navController: NavController) {
 }
 
 @Composable
-fun DoctorSignupScreen(navController: NavController) {
+fun SignupForm(title: String, onSignup: (String, String, String) -> Unit) {
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     var email by remember { mutableStateOf("") }
@@ -248,7 +226,7 @@ fun DoctorSignupScreen(navController: NavController) {
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "Doctor Signup",
+            text = title,
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
             color = Color.Black
@@ -278,8 +256,7 @@ fun DoctorSignupScreen(navController: NavController) {
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = {
             if (username.isNotBlank() && email.isNotBlank() && password.isNotBlank()) {
-                // Implement your signup logic here
-                navController.navigate("doctorHome")
+                onSignup(username, email, password)
             } else {
                 errorMessage = "Please enter all details"
             }
@@ -292,64 +269,3 @@ fun DoctorSignupScreen(navController: NavController) {
         }
     }
 }
-
-@Composable
-fun PatientSignupScreen(navController: NavController) {
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var email by remember { mutableStateOf("") }
-    var errorMessage by remember { mutableStateOf("") }
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Text(
-            text = "Patient Signup",
-            fontSize = 24.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        OutlinedTextField(
-            value = username,
-            onValueChange = { username = it },
-            label = { Text("Username") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(
-            value = email,
-            onValueChange = { email = it },
-            label = { Text("Email") },
-            modifier = Modifier.fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(8.dp))
-        OutlinedTextField(
-            value = password,
-            onValueChange = { password = it },
-            label = { Text("Password") },
-            modifier = Modifier.fillMaxWidth(),
-            visualTransformation = PasswordVisualTransformation()
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = {
-            if (username.isNotBlank() && email.isNotBlank() && password.isNotBlank()) {
-                // Implement your signup logic here
-                navController.navigate("patientHome")
-            } else {
-                errorMessage = "Please enter all details"
-            }
-        }) {
-            Text(text = "Sign Up")
-        }
-        if (errorMessage.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(text = errorMessage, color = Color.Red)
-        }
-    }
-}
-

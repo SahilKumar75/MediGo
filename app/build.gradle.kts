@@ -103,21 +103,12 @@ dependencies {
     implementation (libs.coil.compose)
     implementation (libs.accompanist.pager.v02413rc)
     implementation (libs.accompanist.pager.indicators.v02413rc)
+    implementation(libs.koin.androidx.compose)
 
+    implementation (libs.retrofit)
+    implementation (libs.converter.gson)
+    implementation (libs.androidx.ui.v130)
+    implementation (libs.androidx.material)
 
-    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation ("androidx.compose.ui:ui:1.3.0")
-    implementation ("androidx.compose.material:material:1.3.0")
-    implementation (libs.androidx.ui.tooling.preview.v130)
-    implementation (libs.androidx.lifecycle.runtime.ktx.v251)
-    implementation (libs.androidx.activity.compose.v151)
-
-
-    implementation(libs.ktor.client.core)
-    implementation(libs.ktor.client.content.negotiation)
-    api(libs.ktor.serialization.kotlinx.json)
-
-
-
+    
 }

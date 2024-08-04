@@ -1,22 +1,18 @@
-package com.example.musical.auth.ui.signup
+package com.example.musical.auth.ui.login
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.musical.auth.data.RegisterRequest
+import com.example.musical.auth.data.LoginRequest
 import com.example.musical.auth.data.Result
 import com.example.musical.auth.data.RetrofitInstance
 import kotlinx.coroutines.launch
 
-class AuthViewModel : ViewModel() {
-    var uiState by mutableStateOf(SignUpUIState())
+class LoginViewModel : ViewModel() {
+    var uiState by mutableStateOf(LoginUIState())
         private set
-
-    fun onNameChange(newName: String) {
-        uiState = uiState.copy(name = newName)
-    }
 
     fun onEmailChange(newEmail: String) {
         uiState = uiState.copy(email = newEmail)
@@ -26,13 +22,12 @@ class AuthViewModel : ViewModel() {
         uiState = uiState.copy(password = newPassword)
     }
 
-    fun createUser() {
+    fun loginUser() {
         uiState = uiState.copy(isAuthenticating = true)
         viewModelScope.launch {
             try {
-                val response = RetrofitInstance.api.registerUser(
-                    RegisterRequest(
-                        uiState.name,
+                val response = RetrofitInstance.api.loginUser(
+                    LoginRequest(
                         uiState.email,
                         uiState.password
                     )
@@ -58,18 +53,12 @@ class AuthViewModel : ViewModel() {
             }
         }
     }
-
-    fun loginUser() {
-        TODO("Not yet implemented")
-    }
 }
 
-data class SignUpUIState(
-    val name: String = "",
+data class LoginUIState(
     val email: String = "",
     val password: String = "",
     val isAuthenticating: Boolean = false,
     val errorMessage: String? = null,
     val authSuccess: Boolean = false,
 )
-
